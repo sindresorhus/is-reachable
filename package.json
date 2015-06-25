@@ -1,18 +1,17 @@
 {
-  "name": "is-online",
-  "version": "4.0.2",
-  "description": "Check if the internet connection is up",
+  "name": "is-reachable",
+  "version": "0.0.0",
+  "description": "Check if servers are reachable",
   "license": "MIT",
-  "repository": "sindresorhus/is-online",
+  "repository": "sindresorhus/is-reachable",
   "author": {
     "name": "Sindre Sorhus",
     "email": "sindresorhus@gmail.com",
     "url": "sindresorhus.com"
   },
   "contributors": [
-    "silverwind <me@silverwind.io> (https://github.com/silverwind)"
+    "silverwind <me@silverwind.io> (github.com/silverwind)"
   ],
-  "bin": "cli.js",
   "browser": "browser.js",
   "engines": {
     "node": ">=0.10.0"
@@ -22,31 +21,30 @@
   },
   "files": [
     "index.js",
-    "cli.js",
     "browser.js"
   ],
   "keywords": [
-    "cli-app",
-    "cli",
-    "bin",
     "browser",
     "online",
     "offline",
-    "is-online",
     "network",
     "connected",
     "connectivity",
     "internet",
     "is",
     "has",
-    "detect"
+    "detect",
+    "reachable",
+    "reachability",
+    "server",
+    "host",
+    "accessible",
+    "socket"
   ],
   "dependencies": {
+    "arrify": "^1.0.0",
     "each-async": "^1.1.0",
-    "log-symbols": "^1.0.0",
-    "meow": "^3.1.0",
-    "onetime": "^1.0.0",
-    "root-hints": "^1.0.0"
+    "onetime": "^1.0.0"
   },
   "devDependencies": {
     "ava": "0.0.4"

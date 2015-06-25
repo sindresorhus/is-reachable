@@ -1,7 +1,12 @@
 // need to test manually in devtools
 // $ browserify test-browser.js > tmp.js
-var isOnline = require('./browser');
+'use strict';
+var isReachable = require('./browser');
 
-isOnline(function (online) {
-	console.log('online', online);
+isReachable('google.com', function (reachable) {
+	console.log('reachable', reachable);
+});
+
+isReachable('343645335341233123125235623452344123.com', function (reachable) {
+	console.log('not reachable', reachable);
 });

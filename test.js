@@ -1,11 +1,15 @@
 'use strict';
 var test = require('ava');
-var isOnline = require('./');
+var isReachable = require('./');
 
 test(function (t) {
-	t.plan(1);
+	t.plan(2);
 
-	isOnline(function (err, online) {
-		t.assert(online);
+	isReachable('google.com', function (err, reachable) {
+		t.assert(reachable);
+	});
+
+	isReachable('343645335341233123125235623452344123.com', function (err, reachable) {
+		t.assert(!reachable);
 	});
 });

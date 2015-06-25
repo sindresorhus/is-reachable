@@ -1,77 +1,55 @@
-# is-online [![Build Status](https://travis-ci.org/sindresorhus/is-online.svg?branch=master)](https://travis-ci.org/sindresorhus/is-online)
+# is-reachable [![Build Status](https://travis-ci.org/sindresorhus/is-reachable.svg?branch=master)](https://travis-ci.org/sindresorhus/is-reachable)
 
-> Check if the internet connection is up
+> Check if servers are reachable
 
-Works in Node.js, CLI and the browser *(with [browserify](http://browserify.org))*.
-
-In the browser you have [`navigator.onLine`](https://developer.mozilla.org/en-US/docs/Web/API/NavigatorOnLine.onLine), but it's useless as it only tells you if there's a local connection, and not whether the internet is accessible.
+Works in Node.js and the browser *(with [browserify](http://browserify.org))*.
 
 
 ## Install
 
-```sh
-$ npm install --save is-online
+```
+$ npm install --save is-reachable
 ```
 
 
 ## Usage
 
 ```js
-var isOnline = require('is-online');
+var isReachable = require('is-reachable');
 
-isOnline(function(err, online) {
-	console.log(online);
+isReachable('sindresorhus.com', function (err, reachable) {
+	console.log(reachable);
 	//=> true
 });
 ```
 
 
-## Node API
+## Node.js API
 
-### isOnline(callback)
+### isReachable(hostnames, callback)
 
-#### callback(error, online)
+#### hostnames
 
-*Required*  
+Type: `string`, `array`
+
+One or more [hostnames](https://en.wikipedia.org/wiki/Hostname) to check.
+
+#### callback(error, reachable)
+
 Type: `function`
 
 `error` is there only by Node.js convention and is always `null`.
 
+##### reachable
+
+Type: `boolean`
+
+Is `true` if *any* of the `hostnames` are reachable.
+
 
 ## Browser API
 
-### isOnline(callback)
-
-#### callback(online)
-
-*Required*  
-Type: `function`
-
-
-## CLI
-
-<img src="screenshot.png" width="397">
-
-```sh
-$ npm install --global is-online
-```
-
-```
-$ is-online --help
-
-  Example
-    $ is-online
-    ✔︎ Online
-```
-
-
-## How it works
-
-In node, we first contact one of the thirteen [root servers](https://www.iana.org/domains/root/servers) and ask them to direct us to the servers which host the `<root>` zone (Which they are themselves). If the server answers, we return an online status.
-
-If no satisfying answer is given within one second, we return an offline status. In the rare case where an firewall intercepts the packet and answers it on its behalf, a second check is run which tries to connect to a series of popular web sites on port 80. If one of these connects, we return online, otherwise offline status.
-
-In the browser, a sophisticated check like in node is not possible because DNS and sockets are abstracted away. We use a check which requests an uncached `favicon.ico` on a series of popular websites. If one of this checks succeeds, we return online status. If all the requests fail, we return offline status.
+Same as above except the `callback` doesn't have an `error` parameter.
 
 
 ## Contributors

@@ -1,30 +1,26 @@
 'use strict';
 var eachAsync = require('each-async');
 var onetime = require('onetime');
+var arrify = require('arrify');
 
-var domains = [
-	'www.google.com',
-	'www.cloudflare.com',
-	'www.baidu.com',
-	'www.yandex.ru'
-];
-
-module.exports = function (cb) {
+module.exports = function (hostnames, cb) {
 	cb = onetime(cb);
 
-	eachAsync(domains, function (domain, i, next) {
+	eachAsync(arrify(hostnames), function (hostname, i, next) {
 		var img = new Image();
 
 		img.onload = function () {
 			cb(true);
-			next(new Error); // skip to end
+
+			// skip to end
+			next(new Error());
 		};
 
 		img.onerror = function () {
 			next();
 		};
 
-		img.src = '//' + domain + '/favicon.ico?' + Date.now();
+		img.src = '//' + hostname + '/favicon.ico?' + Date.now();
 	}, function () {
 		cb(false);
 	});
