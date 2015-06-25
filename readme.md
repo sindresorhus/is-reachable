@@ -57,6 +57,11 @@ Same as above except the `callback` doesn't have an `error` parameter.
 - [silverwind](https://github.com/silverwind)
 
 
+## Related
+
+- [is-online](https://github.com/sindresorhus/is-online) - Check if the internet connection is up
+
+
 ## License
 
 MIT © [Sindre Sorhus](http://sindresorhus.com)
