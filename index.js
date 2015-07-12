@@ -57,10 +57,7 @@ function lookup(hostname, cb) {
 
 function isPublicDomain(domain) {
 	var parts = domain.split('.');
-	if (parts[1] && tlds.indexOf(parts[1]) !== -1) {
-		return true;
-	}
-	return false;
+	return parts[1] && tlds.indexOf(parts[1]) !== -1;
 }
 
 function isPortReachable(ip, port, cb) {
