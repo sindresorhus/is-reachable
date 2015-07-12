@@ -16,7 +16,7 @@ module.exports = function (hostnames, cb) {
 	eachAsync(arrify(hostnames), function (hostname, i, done) {
 		lookup(hostname, function (err, address) {
 			// Skip connecting if a dns lookup fails.
-			if (err) {
+			if (err || !address) {
 				return done();
 			}
 
