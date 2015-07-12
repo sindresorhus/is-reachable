@@ -20,10 +20,10 @@ module.exports = function (hostnames, cb) {
 				return done();
 			}
 
-			// When a public domains returns a private ip address we declare the host
-			// as unreachable. This will fail when a intranet resource uses a public
-			// top level domain to resolve to an private address, which is a
-			// violation of RFC 1918 (https://www.ietf.org/rfc/rfc1918.txt).
+			// When a public domains returns a private IP address we declare the host
+			// as unreachable. This will fail intentionally when a intranet resource
+			// uses a public top level domain with a private IP address, which itself
+			// is a violation of RFC 1918 (https://www.ietf.org/rfc/rfc1918.txt).
 			if (isPublicDomain(hostname) && ip.isPrivate(address)) {
 				return done();
 			}
