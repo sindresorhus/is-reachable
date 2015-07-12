@@ -44,7 +44,9 @@
   "dependencies": {
     "arrify": "^1.0.0",
     "each-async": "^1.1.0",
-    "onetime": "^1.0.0"
+    "ip": "^0.3.3",
+    "onetime": "^1.0.0",
+    "tlds": "^1.52.0"
   },
   "devDependencies": {
     "ava": "0.0.4"
