@@ -11,7 +11,6 @@ module.exports = function (hostnames, cb) {
 	cb = onetime(cb);
 
 	eachAsync(arrify(hostnames), function (hostname, i, done) {
-		done = onetime(done);
 		isPortReachable(hostname, port, function (reachable) {
 			if (reachable) {
 				cb(null, true);
@@ -27,8 +26,9 @@ module.exports = function (hostnames, cb) {
 
 
 function isPortReachable(hostname, port, cb) {
-	var socket = new net.Socket();
+	cb = onetime(cb);
 
+	var socket = new net.Socket();
 	var onError = function () {
 		cb(false);
 		socket.destroy();
