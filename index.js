@@ -14,9 +14,9 @@ module.exports = function (hostnames, cb) {
 	cb = onetime(cb);
 
 	eachAsync(arrify(hostnames), function (hostname, i, done) {
-		lookup(hostname, function (err, address) {
-			// Skip connecting if a dns lookup fails.
-			if (err || !address) {
+		dns.lookup(hostname, function (err, address) {
+			// Skip connecting if there is nothing to connect to.
+			if (!address) {
 				return done();
 			}
 
@@ -41,19 +41,6 @@ module.exports = function (hostnames, cb) {
 		cb(null, false);
 	});
 };
-
-function lookup(hostname, cb) {
-	if (net.isIP(hostname)) {
-		cb(null, hostname);
-	} else {
-		dns.lookup(hostname, function (err, address) {
-			if (err) {
-				return cb(err);
-			}
-			cb(null, address);
-		});
-	}
-}
 
 function isPublicDomain(domain) {
 	var parts = domain.split('.');
