@@ -15,9 +15,11 @@ module.exports = function (hostnames, cb) {
 
 	eachAsync(arrify(hostnames), function (hostname, i, done) {
 		dns.lookup(hostname, function (err, address) {
+			// Ignore `err` as we only care about `address`.
 			// Skip connecting if there is nothing to connect to.
 			if (!address) {
-				return done();
+				done();
+				return;
 			}
 
 			// When a public domain returns a private IP address we declare the host
@@ -25,13 +27,16 @@ module.exports = function (hostnames, cb) {
 			// uses a public top level domain with a private IP address, which itself
 			// is a violation of RFC 1918 (https://www.ietf.org/rfc/rfc1918.txt).
 			if (isPublicDomain(hostname) && ip.isPrivate(address)) {
-				return done();
+				done();
+				return;
 			}
 
 			isPortReachable(address, port, function (reachable) {
 				if (reachable) {
 					cb(null, true);
-					done(new Error()); // skip to end
+
+					// skip to end
+					done(new Error());
 				} else {
 					done();
 				}
@@ -52,7 +57,7 @@ function isPortReachable(ip, port, cb) {
 
 	var socket = new net.Socket();
 
-	function onError () {
+	function onError() {
 		cb(false);
 		socket.destroy();
 	}
