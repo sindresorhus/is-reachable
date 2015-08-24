@@ -1,3 +1,4 @@
+/* eslint-env browser */
 'use strict';
 var eachAsync = require('each-async');
 var onetime = require('onetime');
