@@ -4,7 +4,7 @@ var net = require('net');
 var eachAsync = require('each-async');
 var onetime = require('onetime');
 var arrify = require('arrify');
-var tlds = require('tlds');
+var isPublicDomain = require('is-public-domain');
 var ip = require('ip');
 
 var port = 80;
@@ -46,11 +46,6 @@ module.exports = function (hostnames, cb) {
 		cb(null, false);
 	});
 };
-
-function isPublicDomain(domain) {
-	var parts = domain.split('.');
-	return parts.length > 1 && tlds.indexOf(parts.pop()) !== -1;
-}
 
 function isPortReachable(ip, port, cb) {
 	cb = onetime(cb);
