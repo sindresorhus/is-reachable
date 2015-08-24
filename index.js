@@ -1,14 +1,11 @@
 'use strict';
 var dns = require('dns');
-var net = require('net');
 var eachAsync = require('each-async');
 var onetime = require('onetime');
 var arrify = require('arrify');
 var isPublicDomain = require('is-public-domain');
+var isPortReachable = require('is-port-reachable');
 var ip = require('ip');
-
-var port = 80;
-var timeout = 1000;
 
 module.exports = function (hostnames, cb) {
 	cb = onetime(cb);
@@ -31,7 +28,7 @@ module.exports = function (hostnames, cb) {
 				return;
 			}
 
-			isPortReachable(address, port, function (reachable) {
+			isPortReachable(80, {host: address}, function (_, reachable) {
 				if (reachable) {
 					cb(null, true);
 
@@ -46,23 +43,3 @@ module.exports = function (hostnames, cb) {
 		cb(null, false);
 	});
 };
-
-function isPortReachable(ip, port, cb) {
-	cb = onetime(cb);
-
-	var socket = new net.Socket();
-
-	function onError() {
-		cb(false);
-		socket.destroy();
-	}
-
-	socket.setTimeout(timeout);
-	socket.on('error', onError);
-	socket.on('timeout', onError);
-
-	socket.connect(port, ip, function () {
-		cb(true);
-		socket.end();
-	});
-}
