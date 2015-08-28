@@ -4,10 +4,10 @@ var eachAsync = require('each-async');
 var onetime = require('onetime');
 var arrify = require('arrify');
 
-module.exports = function (hostnames, cb) {
+module.exports = function (hosts, cb) {
 	cb = onetime(cb);
 
-	eachAsync(arrify(hostnames), function (hostname, i, next) {
+	eachAsync(arrify(hosts), function (host, i, next) {
 		var img = new Image();
 
 		img.onload = function () {
@@ -21,7 +21,7 @@ module.exports = function (hostnames, cb) {
 			next();
 		};
 
-		img.src = '//' + hostname + '/favicon.ico?' + Date.now();
+		img.src = '//' + host + '/favicon.ico?' + Date.now();
 	}, function () {
 		cb(false);
 	});

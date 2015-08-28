@@ -47,7 +47,8 @@
     "ip": "^0.3.3",
     "is-port-reachable": "^1.0.0",
     "is-public-domain": "^1.0.0",
-    "onetime": "^1.0.0"
+    "onetime": "^1.0.0",
+    "url-parse-lax": "^1.0.0"
   },
   "devDependencies": {
     "ava": "0.0.4",
