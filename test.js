@@ -3,9 +3,13 @@ var test = require('ava');
 var isReachable = require('./');
 
 test(function (t) {
-	t.plan(2);
+	t.plan(3);
 
 	isReachable('google.com', function (err, reachable) {
+		t.assert(reachable);
+	});
+
+	isReachable('google.com:80', function (err, reachable) {
 		t.assert(reachable);
 	});
 

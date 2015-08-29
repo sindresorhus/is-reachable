@@ -6,12 +6,15 @@ var arrify = require('arrify');
 var isPublicDomain = require('is-public-domain');
 var isPortReachable = require('is-port-reachable');
 var ip = require('ip');
+var urlParseLax = require('url-parse-lax');
 
-module.exports = function (hostnames, cb) {
+module.exports = function (hosts, cb) {
 	cb = onetime(cb);
 
-	eachAsync(arrify(hostnames), function (hostname, i, done) {
-		dns.lookup(hostname, function (_, address) {
+	eachAsync(arrify(hosts), function (host, i, done) {
+		host = urlParseLax(host);
+
+		dns.lookup(host.hostname, function (_, address) {
 			// Ignore `err` as we only care about `address`.
 			// Skip connecting if there is nothing to connect to.
 			if (!address) {
@@ -23,12 +26,12 @@ module.exports = function (hostnames, cb) {
 			// as unreachable. This will fail intentionally when a intranet resource
 			// uses a public top level domain with a private IP address, which itself
 			// is a violation of RFC 1918 (https://www.ietf.org/rfc/rfc1918.txt).
-			if (isPublicDomain(hostname) && ip.isPrivate(address)) {
+			if (isPublicDomain(host.hostname) && ip.isPrivate(address)) {
 				done();
 				return;
 			}
 
-			isPortReachable(80, {host: address}, function (_, reachable) {
+			isPortReachable(host.port || 80, {host: address}, function (_, reachable) {
 				if (reachable) {
 					cb(null, true);
 

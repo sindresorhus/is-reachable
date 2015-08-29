@@ -21,6 +21,11 @@ isReachable('sindresorhus.com', function (err, reachable) {
 	console.log(reachable);
 	//=> true
 });
+
+isReachable('google.com:80', function (err, reachable) {
+	console.log(reachable);
+	//=> true
+});
 ```
 
 
