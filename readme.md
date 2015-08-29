@@ -31,13 +31,13 @@ isReachable('google.com:80', function (err, reachable) {
 
 ## Node.js API
 
-### isReachable(hostnames, callback)
+### isReachable(hosts, callback)
 
-#### hostnames
+#### hosts
 
 Type: `string`, `array`
 
-One or more [hostnames](https://en.wikipedia.org/wiki/Hostname) to check.
+One or more [hosts](https://nodejs.org/api/url.html) to check.
 
 #### callback(error, reachable)
 
@@ -49,7 +49,7 @@ Type: `function`
 
 Type: `boolean`
 
-Is `true` if *any* of the `hostnames` are reachable.
+Is `true` if *any* of the `hosts` are reachable.
 
 
 ## Browser API
