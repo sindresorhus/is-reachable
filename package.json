@@ -17,7 +17,7 @@
     "node": ">=0.10.0"
   },
   "scripts": {
-    "test": "xo && node test.js"
+    "test": "xo && ava test.js"
   },
   "files": [
     "index.js",
@@ -51,7 +51,7 @@
     "url-parse-lax": "^1.0.0"
   },
   "devDependencies": {
-    "ava": "0.0.4",
+    "ava": "*",
     "xo": "*"
   }
 }
