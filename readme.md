@@ -15,14 +15,14 @@ $ npm install --save is-reachable
 ## Usage
 
 ```js
-var isReachable = require('is-reachable');
+const isReachable = require('is-reachable');
 
-isReachable('sindresorhus.com', function (err, reachable) {
+isReachable('sindresorhus.com', (err, reachable) => {
 	console.log(reachable);
 	//=> true
 });
 
-isReachable('google.com:80', function (err, reachable) {
+isReachable('google.com:80', (err, reachable) => {
 	console.log(reachable);
 	//=> true
 });
