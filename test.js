@@ -1,19 +1,23 @@
-'use strict';
-var test = require('ava');
-var isReachable = require('./');
+import test from 'ava';
+import fn from './';
 
-test(function (t) {
-	t.plan(3);
-
-	isReachable('google.com', function (_, reachable) {
+test.cb('main', t => {
+	fn('google.com', (_, reachable) => {
 		t.true(reachable);
+		t.end();
 	});
+});
 
-	isReachable('google.com:80', function (_, reachable) {
+test.cb('port', t => {
+	fn('google.com:80', (_, reachable) => {
 		t.true(reachable);
+		t.end();
 	});
+});
 
-	isReachable('343645335341233123125235623452344123.com', function (_, reachable) {
+test.cb('unreachable', t => {
+	fn('343645335341233123125235623452344123.com', (_, reachable) => {
 		t.false(reachable);
+		t.end();
 	});
 });
