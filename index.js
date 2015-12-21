@@ -37,7 +37,7 @@ module.exports = function (dests, cb) {
 				// header contains a well-known router ip.
 				// https://github.com/sindresorhus/is-reachable/issues/3#issuecomment-138735338
 				require(port === 80 ? 'http' : 'https').get({host: host}, function (res) {
-					var redirectHost = url.parse(res.headers.location).host;
+					var redirectHost = url.parse(res.headers.location || '').host;
 					if (routerIps.indexOf(redirectHost) === -1) {
 						cb(null, true);
 
