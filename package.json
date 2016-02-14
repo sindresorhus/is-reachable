@@ -42,10 +42,10 @@
     "socket"
   ],
   "dependencies": {
-    "arrify": "^1.0.0",
-    "each-async": "^1.1.0",
+    "arrify": "^1.0.1",
+    "each-async": "^1.1.1",
     "is-port-reachable": "^1.0.0",
-    "onetime": "^1.0.0",
+    "onetime": "^1.1.0",
     "router-ips": "^0.2.0",
     "url-parse-lax": "^1.0.0"
   },
