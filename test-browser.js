@@ -1,16 +1,16 @@
 // need to test manually in devtools
 // $ browserify test-browser.js > tmp.js
 'use strict';
-var isReachable = require('./browser');
+const isReachable = require('./browser');
 
-isReachable('google.com', function (reachable) {
+isReachable('google.com').then(reachable => {
 	console.log('reachable', reachable);
 });
 
-isReachable('google.com:80', function (reachable) {
+isReachable('google.com:80').then(reachable => {
 	console.log('reachable', reachable);
 });
 
-isReachable('343645335341233123125235623452344123.com', function (reachable) {
+isReachable('343645335341233123125235623452344123.com').then(reachable => {
 	console.log('not reachable', reachable);
 });

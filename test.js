@@ -1,23 +1,14 @@
 import test from 'ava';
-import fn from './';
+import m from './';
 
-test.cb('main', t => {
-	fn('google.com', (_, reachable) => {
-		t.true(reachable);
-		t.end();
-	});
+test('main', async t => {
+	t.true(await m('google.com'));
 });
 
-test.cb('port', t => {
-	fn('google.com:80', (_, reachable) => {
-		t.true(reachable);
-		t.end();
-	});
+test('port', async t => {
+	t.true(await m('google.com:80'));
 });
 
-test.cb('unreachable', t => {
-	fn('343645335341233123125235623452344123.com', (_, reachable) => {
-		t.false(reachable);
-		t.end();
-	});
+test('unreachable', async t => {
+	t.false(await m('343645335341233123125235623452344123.com'));
 });
