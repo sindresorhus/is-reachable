@@ -33,7 +33,7 @@ isReachable('google.com:80').then(reachable => {
 
 ### isReachable(hosts)
 
-Returns a promise for a boolean which is `true` if any of the `hosts` are reachable.
+Returns a `Promise` for a `boolean` which is `true` if any of the `hosts` are reachable.
 
 #### hosts
 
