@@ -7,6 +7,7 @@ const routerIps = require('router-ips');
 const urlParseLax = require('url-parse-lax');
 const got = require('got');
 const pify = require('pify');
+const pAny = require('p-any');
 
 const checkRedirection = (host, port) => {
 	const protocol = port === 80 ? 'http:' : 'https:';
@@ -23,28 +24,26 @@ const checkRedirection = (host, port) => {
 };
 
 module.exports = dests => {
-	return Promise.all(arrify(dests).map(x => {
+	return pAny(arrify(dests).map(x => {
 		x = urlParseLax(x);
 
 		const host = x.hostname;
 		const port = x.port || 80;
 
-		return pify(dns.lookup)(host)
-			.then(address => {
-				if (!address) {
-					return false;
-				}
+		return pify(dns.lookup)(host).then(address => {
+			if (!address) {
+				return false;
+			}
 
-				if (routerIps.has(address)) {
-					return false;
-				}
+			if (routerIps.has(address)) {
+				return false;
+			}
 
-				if (port === 80 || port === 443) {
-					return checkRedirection(host, port);
-				}
+			if (port === 80 || port === 443) {
+				return checkRedirection(host, port);
+			}
 
-				return pify(isPortReachable)(port, {host: address});
-			})
-			.catch(() => false);
-	})).then(dests => dests.some(Boolean));
+			return isPortReachable(port, {host: address});
+		});
+	})).catch(() => false);
 };

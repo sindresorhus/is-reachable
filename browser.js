@@ -1,9 +1,10 @@
 /* eslint-env browser */
 'use strict';
 const arrify = require('arrify');
+const pAny = require('p-any');
 
 module.exports = hosts => {
-	return Promise.all(arrify(hosts).map(x => {
+	return pAny(arrify(hosts).map(x => {
 		return new Promise(resolve => {
 			const img = new Image();
 
@@ -12,5 +13,5 @@ module.exports = hosts => {
 
 			img.src = `//${x}/favicon.ico?${Date.now()}`;
 		});
-	})).then(hosts => hosts.some(Boolean));
+	}));
 };
