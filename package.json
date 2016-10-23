@@ -12,7 +12,6 @@
   "contributors": [
     "silverwind <me@silverwind.io> (github.com/silverwind)"
   ],
-  "browser": "browser.js",
   "engines": {
     "node": ">=4"
   },
@@ -54,6 +53,7 @@
     "ava": "*",
     "xo": "*"
   },
+  "browser": "browser.js",
   "xo": {
     "esnext": true
   }

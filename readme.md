@@ -29,7 +29,7 @@ isReachable('google.com:80').then(reachable => {
 ```
 
 
-## Node.js API
+## API
 
 ### isReachable(hosts)
 
@@ -40,11 +40,6 @@ Returns a `Promise` for a `boolean` which is `true` if any of the `hosts` are re
 Type: `string` `Array`
 
 One or more [hosts](https://nodejs.org/api/url.html) to check.
-
-
-## Browser API
-
-Same as above.
 
 
 ## Contributors
@@ -59,4 +54,4 @@ Same as above.
 
 ## License
 
-MIT © [Sindre Sorhus](http://sindresorhus.com)
+MIT © [Sindre Sorhus](https://sindresorhus.com)
