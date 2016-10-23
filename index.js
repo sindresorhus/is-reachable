@@ -1,69 +1,49 @@
 'use strict';
-var dns = require('dns');
-var arrify = require('arrify');
-var eachAsync = require('each-async');
-var isPortReachable = require('is-port-reachable');
-var onetime = require('onetime');
-var routerIps = require('router-ips');
-var url = require('url');
-var urlParseLax = require('url-parse-lax');
+const dns = require('dns');
+const url = require('url');
+const arrify = require('arrify');
+const isPortReachable = require('is-port-reachable');
+const routerIps = require('router-ips');
+const urlParseLax = require('url-parse-lax');
+const got = require('got');
+const pify = require('pify');
+const pAny = require('p-any');
 
-module.exports = function (dests, cb) {
-	cb = onetime(cb);
+const checkRedirection = (host, port) => {
+	const protocol = port === 80 ? 'http:' : 'https:';
 
-	eachAsync(arrify(dests), function (dest, i, done) {
-		dest = urlParseLax(dest);
+	return got(host, {protocol}).then(res => {
+		const redirectHost = url.parse(res.headers.location || '').host;
 
-		var host = dest.hostname;
-		var port = dest.port || 80;
+		if (routerIps.has(redirectHost)) {
+			return false;
+		}
 
-		dns.lookup(host, function (_, address) {
-			// Ignore `err` as we only care about `address`.
-			// Skip connecting if there is nothing to connect to.
+		return true;
+	});
+};
+
+module.exports = dests => {
+	return pAny(arrify(dests).map(x => {
+		x = urlParseLax(x);
+
+		const host = x.hostname;
+		const port = x.port || 80;
+
+		return pify(dns.lookup)(host).then(address => {
 			if (!address) {
-				done();
-				return;
+				return false;
 			}
 
-			// When the returned address is a well-known router ip, we might
-			// have been redirected to a router's captive portal.
-			if (routerIps.indexOf(address) !== -1) {
-				done();
-				return;
+			if (routerIps.has(address)) {
+				return false;
 			}
 
 			if (port === 80 || port === 443) {
-				// Try to detect HTTP redirection by checking if the `Location`
-				// header contains a well-known router ip.
-				// https://github.com/sindresorhus/is-reachable/issues/3#issuecomment-138735338
-				require(port === 80 ? 'http' : 'https').get({host: host}, function (res) {
-					var redirectHost = url.parse(res.headers.location || '').host;
-					if (routerIps.indexOf(redirectHost) === -1) {
-						cb(null, true);
-
-						// skip to end
-						done(new Error());
-					} else {
-						done();
-					}
-				}).on('error', function () {
-					done();
-				});
-			} else {
-				// Just test if the port answers to a SYN
-				isPortReachable(port, {host: address}, function (_, reachable) {
-					if (reachable) {
-						cb(null, true);
-
-						// skip to end
-						done(new Error());
-					} else {
-						done();
-					}
-				});
+				return checkRedirection(host, port);
 			}
+
+			return isPortReachable(port, {host: address});
 		});
-	}, function () {
-		cb(null, false);
-	});
+	})).catch(() => false);
 };

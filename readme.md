@@ -17,12 +17,12 @@ $ npm install --save is-reachable
 ```js
 const isReachable = require('is-reachable');
 
-isReachable('sindresorhus.com', (err, reachable) => {
+isReachable('sindresorhus.com').then(reachable => {
 	console.log(reachable);
 	//=> true
 });
 
-isReachable('google.com:80', (err, reachable) => {
+isReachable('google.com:80').then(reachable => {
 	console.log(reachable);
 	//=> true
 });
@@ -31,30 +31,20 @@ isReachable('google.com:80', (err, reachable) => {
 
 ## Node.js API
 
-### isReachable(hosts, callback)
+### isReachable(hosts)
+
+Returns a `Promise` for a `boolean` which is `true` if any of the `hosts` are reachable.
 
 #### hosts
 
-Type: `string`, `array`
+Type: `string` `Array`
 
 One or more [hosts](https://nodejs.org/api/url.html) to check.
-
-#### callback(error, reachable)
-
-Type: `function`
-
-`error` is there only by Node.js convention and is always `null`.
-
-##### reachable
-
-Type: `boolean`
-
-Is `true` if *any* of the `hosts` are reachable.
 
 
 ## Browser API
 
-Same as above except the `callback` doesn't have an `error` parameter.
+Same as above.
 
 
 ## Contributors

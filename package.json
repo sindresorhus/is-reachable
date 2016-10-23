@@ -14,7 +14,7 @@
   ],
   "browser": "browser.js",
   "engines": {
-    "node": ">=0.10.0"
+    "node": ">=4"
   },
   "scripts": {
     "test": "xo && ava test.js"
@@ -43,14 +43,18 @@
   ],
   "dependencies": {
     "arrify": "^1.0.1",
-    "each-async": "^1.1.1",
-    "is-port-reachable": "^1.0.0",
-    "onetime": "^1.1.0",
-    "router-ips": "^0.2.0",
+    "got": "^6.3.0",
+    "is-port-reachable": "^2.0.0",
+    "p-any": "^1.0.0",
+    "pify": "^2.3.0",
+    "router-ips": "^0.3.0",
     "url-parse-lax": "^1.0.0"
   },
   "devDependencies": {
     "ava": "*",
     "xo": "*"
+  },
+  "xo": {
+    "esnext": true
   }
 }
