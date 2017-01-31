@@ -1,12 +1,24 @@
 import test from 'ava';
 import m from './';
 
-test('main', async t => {
+test('hostname', async t => {
 	t.true(await m('google.com'));
 });
 
-test('port', async t => {
+test('hostname and port', async t => {
 	t.true(await m('google.com:80'));
+});
+
+test('multiple https urls', async t => {
+	t.true(await m(['https://google.com', 'https://baidu.com']));
+});
+
+test('ftp host and port', async t => {
+	t.true(await m('speedtest.tele2.net:21'));
+});
+
+test('ftp url', async t => {
+	t.true(await m('ftp://speedtest.tele2.net'));
 });
 
 test('unreachable', async t => {

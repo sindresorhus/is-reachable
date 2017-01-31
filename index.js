@@ -1,21 +1,20 @@
 'use strict';
 const dns = require('dns');
-const url = require('url');
 const arrify = require('arrify');
-const isPortReachable = require('is-port-reachable');
-const routerIps = require('router-ips');
-const urlParseLax = require('url-parse-lax');
 const got = require('got');
-const pify = require('pify');
+const isPortReachable = require('is-port-reachable');
 const pAny = require('p-any');
+const pify = require('pify');
+const pn = require('port-numbers');
+const prependHttp = require('prepend-http');
+const routerIps = require('router-ips');
+const URL = require('url-parse');
 
-const checkRedirection = (host, port) => {
-	const protocol = port === 80 ? 'http:' : 'https:';
+const checkRedirection = url => {
+	return got(url).then(res => {
+		const redirectHostname = (new URL(res.headers.location || '')).hostname;
 
-	return got(host, {protocol}).then(res => {
-		const redirectHost = url.parse(res.headers.location || '').host;
-
-		if (routerIps.has(redirectHost)) {
+		if (routerIps.has(redirectHostname)) {
 			return false;
 		}
 
@@ -24,13 +23,15 @@ const checkRedirection = (host, port) => {
 };
 
 module.exports = dests => {
-	return pAny(arrify(dests).map(x => {
-		x = urlParseLax(x);
+	return pAny(arrify(dests).map(url => {
+		url = new URL(prependHttp(url));
 
-		const host = x.hostname;
-		const port = x.port || 80;
+		const hostname = url.hostname;
+		const protocol = url.protocol;
+		const port = url.port || pn.getPort(protocol.slice(0, -1)).port || 80;
 
-		return pify(dns.lookup)(host).then(address => {
+		console.log(url.toString());
+		return pify(dns.lookup)(hostname).then(address => {
 			if (!address) {
 				return false;
 			}
@@ -39,8 +40,8 @@ module.exports = dests => {
 				return false;
 			}
 
-			if (port === 80 || port === 443) {
-				return checkRedirection(host, port);
+			if (protocol === 'http' || protocol === 'https') {
+				return checkRedirection(url.toString());
 			}
 
 			return isPortReachable(port, {host: address});
