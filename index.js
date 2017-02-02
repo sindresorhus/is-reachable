@@ -30,7 +30,6 @@ module.exports = dests => {
 		const protocol = url.protocol;
 		const port = url.port || pn.getPort(protocol.slice(0, -1)).port || 80;
 
-		console.log(url.toString());
 		return pify(dns.lookup)(hostname).then(address => {
 			if (!address) {
 				return false;
