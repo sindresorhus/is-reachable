@@ -42,7 +42,7 @@ Returns a `Promise` for a `boolean` which is `true` if any of the `targets` are 
 
 Type: `string` `Array`
 
-One or more targets to check. Can either be a full [URL](https://nodejs.org/api/url.html) like `https://server.com`, `hostname:port` or just `hostname`. When the protocol is missing from a target `http` is assumed.
+One or more targets to check. Can either be a full [URL](https://nodejs.org/api/url.html) like `https://hostname`, `hostname:port` or just `hostname`. When the protocol is missing from a target `http` is assumed.
 
 [Well-known protocols][] are supported (e.g. `ftp://`, `mysql://`, `redis://` and more).
 
