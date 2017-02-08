@@ -34,17 +34,25 @@ isReachable('google.com:80').then(reachable => {
 
 ## API
 
-### isReachable(targets)
+### isReachable(targets, [options])
 
 Returns a `Promise` for a `boolean` which is `true` if any of the `targets` are reachable.
 
 #### targets
 
-Type: `string` `Array`
+Type: `string` `array`
 
 One or more targets to check. Can either be a full [URL](https://nodejs.org/api/url.html) like `https://hostname`, `hostname:port` or just `hostname`. When the protocol is missing from a target `http` is assumed.
 
 [Well-known protocols][] are supported (e.g. `ftp://`, `mysql://`, `redis://` and more).
+
+#### options
+
+##### timeout
+
+Type: `number`
+
+Timeout in milliseconds after which a request is considered failed. Default: `5000.
 
 ## Contributors
 
