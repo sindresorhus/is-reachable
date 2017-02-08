@@ -39,7 +39,7 @@ module.exports = dests => {
 				return false;
 			}
 
-			if (protocol === 'http' || protocol === 'https') {
+			if (protocol === 'http:' || protocol === 'https:') {
 				return checkRedirection(url.toString());
 			}
 

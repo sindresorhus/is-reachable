@@ -22,3 +22,7 @@ isReachable('https://google.com').then(reachable => {
 isReachable('343645335341233123125235623452344123.com').then(reachable => {
 	console.log('not reachable', reachable);
 });
+
+isReachable('https://google.com/notfound.js').then(reachable => {
+	console.log('not reachable', reachable);
+});
