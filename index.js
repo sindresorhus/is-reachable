@@ -46,7 +46,7 @@ function isTargetReachable(url) {
 
 module.exports = (dests, opts) => {
 	opts = opts || {};
-	opts.timeout = typeof opts.timeout === 'number' || 5000;
+	opts.timeout = typeof opts.timeout === 'number' ? opts.timeout : 5000;
 
 	const p = pAny(arrify(dests).map(isTargetReachable));
 	return pTimeout(p, opts.timeout).catch(() => false);

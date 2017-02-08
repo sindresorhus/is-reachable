@@ -29,6 +29,10 @@ test('unreachable pathname', async t => {
 	t.false(await m('https://google.com/notfound.js'));
 });
 
-test('impossible timeout', async t => {
+test('with timeout', async t => {
+	t.true(await m('https://google.com', {timeout: 3000}));
+});
+
+test('with impossible timeout', async t => {
 	t.false(await m('https://google.com', {timeout: 1}));
 });
