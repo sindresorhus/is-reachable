@@ -21,6 +21,10 @@ test('ftp url', async t => {
 	t.true(await m('ftp://speedtest.tele2.net'));
 });
 
-test('unreachable', async t => {
+test('unreachable hostname', async t => {
 	t.false(await m('343645335341233123125235623452344123.com'));
+});
+
+test('unreachable pathname', async t => {
+	t.false(await m('https://google.com/notfound.js'));
 });
