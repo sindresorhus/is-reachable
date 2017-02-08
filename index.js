@@ -11,46 +11,36 @@ const routerIps = require('router-ips');
 const URL = require('url-parse');
 
 const checkRedirection = url => {
-	return new Promise(resolve => {
-		got(url).then(res => {
-			const redirectHostname = (new URL(res.headers.location || '')).hostname;
-
-			if (routerIps.has(redirectHostname)) {
-				resolve(false);
-			}
-
-			resolve(true);
-		}).catch(() => resolve(false));
-	});
+	return got(url).then(res => {
+		return !routerIps.has((new URL(res.headers.location || '')).hostname);
+	}).catch(() => false);
 };
 
 function isTargetReachable(url) {
-	return new Promise(resolve => {
-		const uri = new URL(prependHttp(url));
-		const hostname = uri.hostname;
-		let protocol = uri.protocol;
-		const port = Number(uri.port) || pn.getPort(protocol.slice(0, -1)).port || 80;
+	const uri = new URL(prependHttp(url));
+	const hostname = uri.hostname;
+	let protocol = uri.protocol;
+	const port = Number(uri.port) || pn.getPort(protocol.slice(0, -1)).port || 80;
 
-		if (!/^[a-z]+:\/\//.test(url) && port !== 80 && port !== 443) {
-			protocol = pn.getService(port).name + ':';
+	if (!/^[a-z]+:\/\//.test(url) && port !== 80 && port !== 443) {
+		protocol = pn.getService(port).name + ':';
+	}
+
+	return pify(dns.lookup)(hostname).then(address => {
+		if (!address) {
+			return false;
 		}
 
-		pify(dns.lookup)(hostname).then(address => {
-			if (!address) {
-				resolve(false);
-			}
+		if (routerIps.has(address)) {
+			return false;
+		}
 
-			if (routerIps.has(address)) {
-				resolve(false);
-			}
+		if (protocol === 'http:' || protocol === 'https:') {
+			return checkRedirection(url);
+		}
 
-			if (protocol === 'http:' || protocol === 'https:') {
-				checkRedirection(url).then(resolve);
-			} else {
-				isPortReachable(port, {host: address}).then(resolve);
-			}
-		}).catch(() => resolve(false));
-	});
+		return isPortReachable(port, {host: address});
+	}).catch(() => false);
 }
 
 module.exports = (dests, opts) => {
