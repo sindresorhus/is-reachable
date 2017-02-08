@@ -40,7 +40,7 @@ Returns a `Promise` for a `boolean` which is `true` if any of the `targets` are 
 
 #### targets
 
-Type: `string` `array`
+Type: `string` `Array`
 
 One or more targets to check. Can either be a full [URL](https://nodejs.org/api/url.html) like `https://hostname`, `hostname:port` or just `hostname`. When the protocol is missing from a target `http` is assumed.
 
