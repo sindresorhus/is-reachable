@@ -1,6 +1,6 @@
 {
   "name": "is-reachable",
-  "version": "2.3.0",
+  "version": "2.3.1",
   "description": "Check if servers are reachable",
   "license": "MIT",
   "repository": "sindresorhus/is-reachable",
