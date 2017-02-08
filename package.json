@@ -45,6 +45,7 @@
     "got": "^6.7.1",
     "is-port-reachable": "^2.0.0",
     "p-any": "^1.0.0",
+    "p-timeout": "^1.0.0",
     "pify": "^2.3.0",
     "port-numbers": "^1.1.53",
     "prepend-http": "^1.0.4",

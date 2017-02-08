@@ -6,6 +6,7 @@ const isPortReachable = require('is-port-reachable');
 const pAny = require('p-any');
 const pify = require('pify');
 const pn = require('port-numbers');
+const pTimeout = require('p-timeout');
 const prependHttp = require('prepend-http');
 const routerIps = require('router-ips');
 const URL = require('url-parse');
@@ -47,8 +48,6 @@ module.exports = (dests, opts) => {
 	opts = opts || {};
 	opts.timeout = typeof opts.timeout === 'number' || 5000;
 
-	return new Promise(resolve => {
-		setTimeout(() => resolve(false), opts.timeout);
-		pAny(arrify(dests).map(isTargetReachable)).then(resolve);
-	});
+	const p = pAny(arrify(dests).map(isTargetReachable));
+	return pTimeout(p, opts.timeout).catch(() => false);
 };
