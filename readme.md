@@ -61,7 +61,8 @@ Timeout in milliseconds after which a request is considered failed. Default: `50
 
 ## Related
 
-- [is-online](https://github.com/sindresorhus/is-online) - Check if the internet connection is up
+- [is-all-reachable](https://github.com/kikobeats/is-all-reachable) - Check if a list of hosts servers are all recheable.
+- [is-online](https://github.com/sindresorhus/is-online) - Check if the internet connection is up.
 
 
 ## License
