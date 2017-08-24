@@ -52,7 +52,7 @@ One or more targets to check. Can either be a full [URL](https://nodejs.org/api/
 
 Type: `number`
 
-Timeout in milliseconds after which a request is considered failed. Default: `5000.
+Timeout in milliseconds after which a request is considered failed. Default: `5000`.
 
 ## Contributors
 
