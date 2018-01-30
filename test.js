@@ -1,3 +1,5 @@
+import dns from 'dns';
+import pify from 'pify';
 import test from 'ava';
 import m from './';
 
@@ -6,7 +8,15 @@ test('hostname', async t => {
 });
 
 test('hostname and port', async t => {
-	t.true(await m('google.com:80'));
+	t.true(await m('google.com:443'));
+});
+
+test('ip', async t => {
+	t.true(await m(await pify(dns.resolve)('google.com')));
+});
+
+test('ip and protocol', async t => {
+	t.true(await m(`https://${await pify(dns.lookup)('google.com')}`));
 });
 
 test('multiple https urls', async t => {

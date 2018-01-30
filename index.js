@@ -1,5 +1,6 @@
 'use strict';
 const dns = require('dns');
+const net = require('net');
 const arrify = require('arrify');
 const got = require('got');
 const isPortReachable = require('is-port-reachable');
@@ -11,37 +12,39 @@ const prependHttp = require('prepend-http');
 const routerIps = require('router-ips');
 const URL = require('url-parse');
 
-const checkRedirection = url => {
-	return got(url).then(res => {
-		return !routerIps.has((new URL(res.headers.location || '')).hostname);
+const checkRedirection = target => {
+	return got(target, {rejectUnauthorized: false}).then(res => {
+		const url = new URL(res.headers.location || 'x://x');
+		return !routerIps.has(url.hostname);
 	}).catch(() => false);
 };
 
-function isTargetReachable(url) {
-	const uri = new URL(prependHttp(url));
-	const hostname = uri.hostname;
-	let protocol = uri.protocol;
-	const port = Number(uri.port) || pn.getPort(protocol.slice(0, -1)).port || 80;
+function isTargetReachable(target) {
+	const url = new URL(prependHttp(target));
+	url.port = Number(url.port) || pn.getPort(url.protocol.slice(0, -1)).port || 80;
 
-	if (!/^[a-z]+:\/\//.test(url) && port !== 80 && port !== 443) {
-		protocol = pn.getService(port).name + ':';
+	if (!/^[a-z]+:\/\//.test(target)) {
+		url.protocol = pn.getService(url.port).name + ':';
 	}
 
-	return pify(dns.lookup)(hostname).then(address => {
-		if (!address) {
+	return getAddress(url.hostname).then(address => {
+		if (!address || routerIps.has(address)) {
 			return false;
 		}
 
-		if (routerIps.has(address)) {
-			return false;
+		if (url.protocol === 'http:' || url.protocol === 'https:') {
+			return checkRedirection(url.toString());
 		}
 
-		if (protocol === 'http:' || protocol === 'https:') {
-			return checkRedirection(url);
-		}
-
-		return isPortReachable(port, {host: address});
+		return isPortReachable(url.port, {host: address});
 	}).catch(() => false);
+}
+
+function getAddress(hostname) {
+	if (net.isIP(hostname)) {
+		return Promise.resolve(hostname);
+	}
+	return pify(dns.lookup)(hostname);
 }
 
 module.exports = (dests, opts) => {
