@@ -25,7 +25,7 @@ isReachable('sindresorhus.com').then(reachable => {
 	//=> true
 });
 
-isReachable('google.com:80').then(reachable => {
+isReachable('google.com:80', {timeout: 10000}).then(reachable => {
 	console.log(reachable);
 	//=> true
 });
@@ -34,7 +34,7 @@ isReachable('google.com:80').then(reachable => {
 
 ## API
 
-### isReachable(targets, [options])
+### isReachable(targets, [{options}])
 
 Returns a `Promise` for a `boolean` which is `true` if any of the `targets` are reachable.
 
@@ -47,6 +47,7 @@ One or more targets to check. Can either be a full [URL](https://nodejs.org/api/
 [Well-known protocols][] are supported (e.g. `ftp://`, `mysql://`, `redis://` and more).
 
 #### options
+Type: `object`
 
 ##### timeout
 
