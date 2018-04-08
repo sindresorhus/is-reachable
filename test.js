@@ -1,7 +1,7 @@
 import dns from 'dns';
 import pify from 'pify';
 import test from 'ava';
-import m from './';
+import m from '.';
 
 test('hostname', async t => {
 	t.true(await m('google.com'));

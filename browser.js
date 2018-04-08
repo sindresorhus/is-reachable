@@ -15,8 +15,8 @@ module.exports = hosts => {
 			const port = url.port ? `:${url.port}` : '';
 
 			const img = new Image();
-			img.onload = () => resolve(true);
-			img.onerror = () => resolve(false);
+			img.addEventListener('load', () => resolve(true));
+			img.addEventListener('error', () => resolve(false));
 			img.src = `${protocol}//${hostname}${port}/favicon.ico?${Date.now()}`;
 		});
 	}));

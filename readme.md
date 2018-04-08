@@ -11,7 +11,7 @@ The browser version is limited by the fact that browsers cannot connect to arbit
 ## Install
 
 ```
-$ npm install --save is-reachable
+$ npm install is-reachable
 ```
 
 
@@ -40,7 +40,7 @@ Returns a `Promise` for a `boolean` which is `true` if any of the `targets` are 
 
 #### targets
 
-Type: `string` `Array`
+Type: `string` `string[]`
 
 One or more targets to check. Can either be a full [URL](https://nodejs.org/api/url.html) like `https://hostname`, `hostname:port` or just `hostname`. When the protocol is missing from a target `http` is assumed.
 
