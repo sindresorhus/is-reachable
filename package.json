@@ -42,13 +42,13 @@
 	],
 	"dependencies": {
 		"arrify": "^1.0.1",
-		"got": "^8.0.3",
 		"is-port-reachable": "^2.0.0",
 		"p-any": "^1.1.0",
 		"p-timeout": "^2.0.1",
 		"pify": "^3.0.0",
 		"port-numbers": "^2.0.20",
 		"prepend-http": "^2.0.0",
+		"reachable-url": "~1.0.1",
 		"router-ips": "^1.0.0",
 		"url-parse": "^1.2.0"
 	},

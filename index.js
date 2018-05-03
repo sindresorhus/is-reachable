@@ -2,7 +2,6 @@
 const dns = require('dns');
 const net = require('net');
 const arrify = require('arrify');
-const got = require('got');
 const isPortReachable = require('is-port-reachable');
 const pAny = require('p-any');
 const pify = require('pify');
@@ -11,9 +10,10 @@ const pTimeout = require('p-timeout');
 const prependHttp = require('prepend-http');
 const routerIps = require('router-ips');
 const URL = require('url-parse');
+const reachableUrl = require('reachable-url');
 
 const checkRedirection = target => {
-	return got(target, {rejectUnauthorized: false}).then(res => {
+	return reachableUrl(target, {rejectUnauthorized: false}).then(res => {
 		const url = new URL(res.headers.location || 'x://x');
 		return !routerIps.has(url.hostname);
 	}).catch(() => false);
