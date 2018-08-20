@@ -10,7 +10,7 @@ module.exports = hosts => {
 		return new Promise(resolve => {
 			url = new URL(prependHttp(url));
 
-			const hostname = url.hostname;
+			const {hostname} = url.hostname;
 			const protocol = url.protocol || '';
 			const port = url.port ? `:${url.port}` : '';
 
