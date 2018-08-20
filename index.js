@@ -21,7 +21,7 @@ const checkRedirection = target => {
 
 function isTargetReachable(target) {
 	const url = new URL(prependHttp(target));
-	url.port = Number(url.port) || pn.getPort(url.protocol.slice(0, -1)).port || 80;
+	url.port = Number(url.port) || (url.protocol.length ? pn.getPort(url.protocol.slice(0, -1)).port : false) || 80;
 
 	if (!/^[a-z]+:\/\//.test(target)) {
 		url.protocol = pn.getService(url.port).name + ':';
