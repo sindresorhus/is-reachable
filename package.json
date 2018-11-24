@@ -13,7 +13,7 @@
 		"silverwind <me@silverwind.io> (github.com/silverwind)"
 	],
 	"engines": {
-		"node": ">=4"
+		"node": ">=8"
 	},
 	"scripts": {
 		"test": "xo && ava test.js"
@@ -42,15 +42,15 @@
 	],
 	"dependencies": {
 		"arrify": "^1.0.1",
-		"got": "^8.0.3",
+		"got": "^9.3.2",
 		"is-port-reachable": "^2.0.0",
 		"p-any": "^1.1.0",
 		"p-timeout": "^2.0.1",
-		"pify": "^3.0.0",
-		"port-numbers": "^2.0.20",
+		"pify": "^4.0.1",
+		"port-numbers": "^4.0.4",
 		"prepend-http": "^2.0.0",
 		"router-ips": "^1.0.0",
-		"url-parse": "^1.2.0"
+		"url-parse": "^1.4.4"
 	},
 	"devDependencies": {
 		"ava": "*",

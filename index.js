@@ -12,14 +12,20 @@ const prependHttp = require('prepend-http');
 const routerIps = require('router-ips');
 const URL = require('url-parse');
 
-const checkRedirection = target => {
-	return got(target, {rejectUnauthorized: false}).then(res => {
-		const url = new URL(res.headers.location || 'x://x');
-		return !routerIps.has(url.hostname);
-	}).catch(() => false);
+const checkRedirection = async target => {
+	let res;
+
+	try {
+		res = await got(target, {rejectUnauthorized: false});
+	} catch (error) {
+		return false;
+	}
+
+	const url = new URL(res.headers.location || 'x://x');
+	return !routerIps.has(url.hostname);
 };
 
-function isTargetReachable(target) {
+async function isTargetReachable(target) {
 	const url = new URL(prependHttp(target));
 	url.port = Number(url.port) || portNumbers.getPort(url.protocol.slice(0, -1)).port || 80;
 
@@ -28,17 +34,22 @@ function isTargetReachable(target) {
 		url.protocol = ((service && service.name) ? service.name : 'unknown') + ':';
 	}
 
-	return getAddress(url.hostname).then(address => {
-		if (!address || routerIps.has(address)) {
-			return false;
-		}
+	let address;
+	try {
+		address = await getAddress(url.hostname);
+	} catch (error) {
+		return false;
+	}
 
-		if (url.protocol === 'http:' || url.protocol === 'https:') {
-			return checkRedirection(url.toString());
-		}
+	if (!address || routerIps.has(address)) {
+		return false;
+	}
 
-		return isPortReachable(url.port, {host: address});
-	}).catch(() => false);
+	if (url.protocol === 'http:' || url.protocol === 'https:') {
+		return checkRedirection(url.toString());
+	}
+
+	return isPortReachable(url.port, {host: address});
 }
 
 function getAddress(hostname) {
