@@ -32,7 +32,11 @@ test('ftp url', async t => {
 });
 
 test('unreachable hostname', async t => {
-	t.false(await m('343645335341233123125235623452344123.com'));
+	t.false(await m('343645335341233123125235623452344123.local'));
+});
+
+test('unknown service', async t => {
+	t.false(await m('343645335341233123125235623452344123.local:-1'));
 });
 
 test('unreachable pathname', async t => {

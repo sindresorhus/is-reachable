@@ -6,7 +6,7 @@ const got = require('got');
 const isPortReachable = require('is-port-reachable');
 const pAny = require('p-any');
 const pify = require('pify');
-const pn = require('port-numbers');
+const portNumbers = require('port-numbers');
 const pTimeout = require('p-timeout');
 const prependHttp = require('prepend-http');
 const routerIps = require('router-ips');
@@ -21,10 +21,11 @@ const checkRedirection = target => {
 
 function isTargetReachable(target) {
 	const url = new URL(prependHttp(target));
-	url.port = Number(url.port) || pn.getPort(url.protocol.slice(0, -1)).port || 80;
+	url.port = Number(url.port) || portNumbers.getPort(url.protocol.slice(0, -1)).port || 80;
 
 	if (!/^[a-z]+:\/\//.test(target)) {
-		url.protocol = pn.getService(url.port).name + ':';
+		const service = portNumbers.getService(url.port);
+		url.protocol = ((service && service.name) ? service.name : 'unknown') + ':';
 	}
 
 	return getAddress(url.hostname).then(address => {
