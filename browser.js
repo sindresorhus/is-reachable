@@ -8,16 +8,14 @@ const URL = require('url-parse');
 module.exports = hosts => {
 	return pAny(arrify(hosts).map(url => {
 		return new Promise(resolve => {
-			url = new URL(prependHttp(url));
+			let {hostname, protocol, port} = new URL(prependHttp(url));
+			protocol = protocol || '';
+			port = port ? `:${port}` : '';
 
-			const {hostname} = url.hostname;
-			const protocol = url.protocol || '';
-			const port = url.port ? `:${url.port}` : '';
-
-			const img = new Image();
-			img.addEventListener('load', () => resolve(true));
-			img.addEventListener('error', () => resolve(false));
-			img.src = `${protocol}//${hostname}${port}/favicon.ico?${Date.now()}`;
+			const image = new Image();
+			image.addEventListener('load', () => resolve(true));
+			image.addEventListener('error', () => resolve(false));
+			image.src = `${protocol}//${hostname}${port}/favicon.ico?${Date.now()}`;
 		});
 	}));
 };
