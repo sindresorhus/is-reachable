@@ -12,10 +12,10 @@ module.exports = hosts => {
 			protocol = protocol || '';
 			port = port ? `:${port}` : '';
 
-			const img = new Image();
-			img.addEventListener('load', () => resolve(true));
-			img.addEventListener('error', () => resolve(false));
-			img.src = `${protocol}//${hostname}${port}/favicon.ico?${Date.now()}`;
+			const image = new Image();
+			image.addEventListener('load', () => resolve(true));
+			image.addEventListener('error', () => resolve(false));
+			image.src = `${protocol}//${hostname}${port}/favicon.ico?${Date.now()}`;
 		});
 	}));
 };

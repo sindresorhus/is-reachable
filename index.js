@@ -1,31 +1,34 @@
 'use strict';
+const {promisify} = require('util');
 const dns = require('dns');
 const net = require('net');
 const arrify = require('arrify');
 const got = require('got');
 const isPortReachable = require('is-port-reachable');
 const pAny = require('p-any');
-const pify = require('pify');
 const portNumbers = require('port-numbers');
 const pTimeout = require('p-timeout');
 const prependHttp = require('prepend-http');
 const routerIps = require('router-ips');
 const URL = require('url-parse');
 
-const checkRedirection = async target => {
-	let res;
+const dnsLookupP = promisify(dns.lookup);
 
+const checkRedirection = async target => {
+	let response;
 	try {
-		res = await got(target, {rejectUnauthorized: false});
-	} catch (error) {
+		response = await got(target, {rejectUnauthorized: false});
+	} catch (_) {
 		return false;
 	}
 
-	const url = new URL(res.headers.location || 'x://x');
+	const url = new URL(response.headers.location || 'x://x');
 	return !routerIps.has(url.hostname);
 };
 
-async function isTargetReachable(target) {
+const getAddress = async hostname => net.isIP(hostname) ? hostname : (await dnsLookupP(hostname)).address;
+
+const isTargetReachable = async target => {
 	const url = new URL(prependHttp(target));
 	url.port = Number(url.port) || portNumbers.getPort(url.protocol.slice(0, -1)).port || 80;
 
@@ -37,7 +40,7 @@ async function isTargetReachable(target) {
 	let address;
 	try {
 		address = await getAddress(url.hostname);
-	} catch (error) {
+	} catch (_) {
 		return false;
 	}
 
@@ -50,19 +53,12 @@ async function isTargetReachable(target) {
 	}
 
 	return isPortReachable(url.port, {host: address});
-}
+};
 
-function getAddress(hostname) {
-	if (net.isIP(hostname)) {
-		return Promise.resolve(hostname);
-	}
-	return pify(dns.lookup)(hostname);
-}
+module.exports = (destinations, options) => {
+	options = {...options};
+	options.timeout = typeof options.timeout === 'number' ? options.timeout : 5000;
 
-module.exports = (dests, opts) => {
-	opts = opts || {};
-	opts.timeout = typeof opts.timeout === 'number' ? opts.timeout : 5000;
-
-	const p = pAny(arrify(dests).map(isTargetReachable));
-	return pTimeout(p, opts.timeout).catch(() => false);
+	const promise = pAny(arrify(destinations).map(isTargetReachable));
+	return pTimeout(promise, options.timeout).catch(() => false);
 };

@@ -46,15 +46,14 @@
 		"is-port-reachable": "^2.0.0",
 		"p-any": "^1.1.0",
 		"p-timeout": "^2.0.1",
-		"pify": "^4.0.1",
 		"port-numbers": "^4.0.4",
 		"prepend-http": "^2.0.0",
 		"router-ips": "^1.0.0",
 		"url-parse": "^1.4.4"
 	},
 	"devDependencies": {
-		"ava": "*",
-		"xo": "*"
+		"ava": "^0.25.0",
+		"xo": "^0.23.0"
 	},
 	"browser": "browser.js"
 }

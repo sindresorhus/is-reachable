@@ -2,11 +2,12 @@
 
 > Check if servers are reachable
 
-Works in Node.js and the browser *(with [browserify](http://browserify.org))*.
+Works in Node.js and the browser *(with a bundler)*.
 
 The Node.js version will do a TCP handshake with the target's port. It attempts to detect cases where a router redirects the request to itself.
 
 The browser version is limited by the fact that browsers cannot connect to arbitrary ports. It only supports HTTP and HTTPS and the check relies on the `/favicon.ico` path being present.
+
 
 ## Install
 
@@ -20,15 +21,13 @@ $ npm install is-reachable
 ```js
 const isReachable = require('is-reachable');
 
-isReachable('sindresorhus.com').then(reachable => {
-	console.log(reachable);
+(async () => {
+	console.log(await isReachable('sindresorhus.com'));
 	//=> true
-});
 
-isReachable('google.com:80').then(reachable => {
-	console.log(reachable);
+	console.log(await isReachable('google.com:80'));
 	//=> true
-});
+})();
 ```
 
 
