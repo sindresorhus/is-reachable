@@ -47,7 +47,7 @@ One or more targets to check. Can either be a full [URL](https://nodejs.org/api/
 
 #### options
 
-Type: `Object`
+Type: `object`
 
 ##### timeout
 
@@ -70,4 +70,4 @@ Timeout in milliseconds after which a request is considered failed. Default: `50
 
 MIT © [Sindre Sorhus](https://sindresorhus.com)
 
-[Well-known protocols]: http://www.iana.org/assignments/service-names-port-numbers/service-names-port-numbers.xhtml
+[Well-known protocols]: https://www.iana.org/assignments/service-names-port-numbers/service-names-port-numbers.xhtml
