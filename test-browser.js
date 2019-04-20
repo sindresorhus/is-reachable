@@ -3,26 +3,26 @@
 'use strict';
 const isReachable = require('./browser');
 
-isReachable('google.com').then(reachable => {
-	console.log('reachable', reachable);
-});
+(async () => {
+	console.log('reachable', await isReachable('google.com'));
+})();
 
-isReachable('google.com:80').then(reachable => {
-	console.log('reachable', reachable);
-});
+(async () => {
+	console.log('reachable', await isReachable('google.com:80'));
+})();
 
-isReachable('//google.com').then(reachable => {
-	console.log('reachable', reachable);
-});
+(async () => {
+	console.log('reachable', await isReachable('//google.com'));
+})();
 
-isReachable('https://google.com').then(reachable => {
-	console.log('reachable', reachable);
-});
+(async () => {
+	console.log('reachable', await isReachable('https://google.com'));
+})();
 
-isReachable('343645335341233123125235623452344123.com').then(reachable => {
-	console.log('not reachable', reachable);
-});
+(async () => {
+	console.log('not reachable', await isReachable('343645335341233123125235623452344123.com'));
+})();
 
-isReachable('https://google.com/notfound.js').then(reachable => {
-	console.log('not reachable', reachable);
-});
+(async () => {
+	console.log('not reachable', await isReachable('https://google.com/notfound.js'));
+})();

@@ -9,9 +9,6 @@
 		"email": "sindresorhus@gmail.com",
 		"url": "sindresorhus.com"
 	},
-	"contributors": [
-		"silverwind <me@silverwind.io> (github.com/silverwind)"
-	],
 	"engines": {
 		"node": ">=8"
 	},

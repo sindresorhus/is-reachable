@@ -55,7 +55,7 @@ const isTargetReachable = async target => {
 	return isPortReachable(url.port, {host: address});
 };
 
-module.exports = (destinations, options) => {
+module.exports = async (destinations, options) => {
 	options = {...options};
 	options.timeout = typeof options.timeout === 'number' ? options.timeout : 5000;
 

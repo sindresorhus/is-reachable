@@ -35,15 +35,15 @@ const isReachable = require('is-reachable');
 
 ### isReachable(targets, [options])
 
-Returns a `Promise` for a `boolean` which is `true` if any of the `targets` are reachable.
+Returns a `Promise<boolean>` which is `true` if any of the `targets` are reachable.
 
 #### targets
 
-Type: `string` `string[]`
+Type: `string | string[]`
 
 One or more targets to check. Can either be a full [URL](https://nodejs.org/api/url.html) like `https://hostname`, `hostname:port` or just `hostname`. When the protocol is missing from a target `http` is assumed.
 
-[Well-known protocols][] are supported (e.g. `ftp://`, `mysql://`, `redis://` and more).
+[Well-known protocols][] are supported (for example: `ftp://`, `mysql://`, `redis://` and more).
 
 #### options
 
@@ -51,14 +51,10 @@ Type: `object`
 
 ##### timeout
 
-Type: `number`
+Type: `number`<br>
+Default: `5000`
 
-Timeout in milliseconds after which a request is considered failed. Default: `5000`.
-
-
-## Contributors
-
-- [silverwind](https://github.com/silverwind)
+Timeout in milliseconds after which a request is considered failed.
 
 
 ## Related
@@ -66,8 +62,14 @@ Timeout in milliseconds after which a request is considered failed. Default: `50
 - [is-online](https://github.com/sindresorhus/is-online) - Check if the internet connection is up
 
 
+## Maintainers
+
+- [Sindre Sorhus](https://github.com/sindresorhus)
+- [silverwind](https://github.com/silverwind)
+
+
 ## License
 
-MIT © [Sindre Sorhus](https://sindresorhus.com)
+MIT
 
 [Well-known protocols]: https://www.iana.org/assignments/service-names-port-numbers/service-names-port-numbers.xhtml

@@ -5,11 +5,10 @@ const pAny = require('p-any');
 const prependHttp = require('prepend-http');
 const URL = require('url-parse');
 
-module.exports = hosts => {
+module.exports = async hosts => {
 	return pAny(arrify(hosts).map(url => {
 		return new Promise(resolve => {
-			let {hostname, protocol, port} = new URL(prependHttp(url));
-			protocol = protocol || '';
+			let {hostname, protocol = '', port} = new URL(prependHttp(url));
 			port = port ? `:${port}` : '';
 
 			const image = new Image();
