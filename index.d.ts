@@ -33,7 +33,7 @@ import isReachable = require('is-reachable');
 ```
 */
 declare function isReachable(
-	targets: string | readonly string[],
+	targets: string | string[],
 	options?: isReachable.Options
 ): Promise<boolean>;
 
