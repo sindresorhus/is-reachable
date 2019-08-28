@@ -25,7 +25,7 @@ const isReachable = require('is-reachable');
 	console.log(await isReachable('sindresorhus.com'));
 	//=> true
 
-	console.log(await isReachable('google.com:80'));
+	console.log(await isReachable('google.com:443'));
 	//=> true
 })();
 ```
@@ -41,9 +41,7 @@ Returns a `Promise<boolean>` which is `true` if any of the `targets` are reachab
 
 Type: `string | string[]`
 
-One or more targets to check. Can either be a full [URL](https://nodejs.org/api/url.html) like `https://hostname`, `hostname:port` or just `hostname`. When the protocol is missing from a target `http` is assumed.
-
-[Well-known protocols][] are supported (for example: `ftp://`, `mysql://`, `redis://` and more).
+One or more targets to check. Can either be `hostname:port`, a URL like `https://hostname:port` or even just `hostname`. `port` must be specified if protocol is not `http:` or `https:` and defaults to `443`. Protocols other than `http:` and `https:` are not supported.
 
 #### options
 

@@ -30,8 +30,8 @@ test('ftp host and port', async t => {
 	t.true(await isReachable('speedtest.tele2.net:21'));
 });
 
-test('ftp url', async t => {
-	t.true(await isReachable('ftp://speedtest.tele2.net'));
+test('imap host and port', async t => {
+	t.true(await isReachable('imap.gmail.com:995'));
 });
 
 test('unreachable hostname', async t => {
