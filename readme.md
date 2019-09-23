@@ -33,7 +33,7 @@ const isReachable = require('is-reachable');
 
 ## API
 
-### isReachable(targets, [options])
+### isReachable(targets, options?)
 
 Returns a `Promise<boolean>` which is `true` if any of the `targets` are reachable.
 
@@ -64,10 +64,3 @@ Timeout in milliseconds after which a request is considered failed.
 
 - [Sindre Sorhus](https://github.com/sindresorhus)
 - [silverwind](https://github.com/silverwind)
-
-
-## License
-
-MIT
-
-[Well-known protocols]: https://www.iana.org/assignments/service-names-port-numbers/service-names-port-numbers.xhtml

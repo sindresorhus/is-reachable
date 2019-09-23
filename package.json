@@ -43,14 +43,14 @@
 		"got": "^9.6.0",
 		"is-port-reachable": "^2.0.1",
 		"p-any": "^2.1.0",
-		"p-timeout": "^3.1.0",
-		"prepend-http": "^2.0.0",
+		"p-timeout": "^3.2.0",
+		"prepend-http": "^3.0.1",
 		"router-ips": "^1.0.0",
-		"url-parse": "^1.4.6"
+		"url-parse": "^1.4.7"
 	},
 	"devDependencies": {
-		"ava": "^1.4.1",
-		"tsd": "^0.7.2",
+		"ava": "^2.4.0",
+		"tsd": "^0.8.0",
 		"xo": "^0.24.0"
 	},
 	"browser": "browser.js"

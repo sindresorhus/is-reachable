@@ -16,7 +16,7 @@ The Node.js version will do a TCP handshake with the target's port. It attempts 
 
 The browser version is limited by the fact that browsers cannot connect to arbitrary ports. It only supports HTTP and HTTPS and the check relies on the `/favicon.ico` path being present.
 
-@param targets - One or more targets to check. Can either be a full [URL](https://nodejs.org/api/url.html) like `https://hostname`, `hostname:port` or just `hostname`. When the protocol is missing from a target `http` is assumed. [Well-known protocols](http://www.iana.org/assignments/service-names-port-numbers/service-names-port-numbers.xhtml) are supported (e.g. `ftp://`, `mysql://`, `redis://` and more).
+@param targets - One or more targets to check. Can either be `hostname:port`, a URL like `https://hostname:port` or even just `hostname`. `port` must be specified if protocol is not `http:` or `https:` and defaults to `443`. Protocols other than `http:` and `https:` are not supported.
 @returns Whether any of the `targets` are reachable.
 
 @example
