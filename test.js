@@ -53,3 +53,7 @@ test('with timeout', async t => {
 test('with impossible timeout', async t => {
 	t.false(await isReachable('https://google.com', {timeout: 1}));
 });
+
+test.failing('parked domain', async t => {
+	t.false(await isReachable('http://find.myrecipes.com'));
+});
