@@ -32,7 +32,7 @@ const checkHttp = async url => {
 
 const getAddress = async hostname => net.isIP(hostname) ? hostname : (await dnsLookupP(hostname)).address;
 
-const isTargetReachable = async target => {
+const isTargetReachable = forceHttpCheck => async target => {
 	const url = new URL(prependHttp(target));
 
 	if (!url.port) {
@@ -50,7 +50,7 @@ const isTargetReachable = async target => {
 		return false;
 	}
 
-	if ([80, 443].includes(url.port)) {
+	if ([80, 443].includes(url.port) || forceHttpCheck) {
 		return checkHttp(url.toString());
 	}
 
@@ -60,7 +60,8 @@ const isTargetReachable = async target => {
 module.exports = async (destinations, options) => {
 	options = {...options};
 	options.timeout = typeof options.timeout === 'number' ? options.timeout : 5000;
+	options.forceHttpCheck = typeof options.forceHttpCheck === 'boolean' ? options.forceHttpCheck : false;
 
-	const promise = pAny(arrify(destinations).map(isTargetReachable));
+	const promise = pAny(arrify(destinations).map(isTargetReachable(options.forceHttpCheck)));
 	return pTimeout(promise, options.timeout).catch(() => false);
 };

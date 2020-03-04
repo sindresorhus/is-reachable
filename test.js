@@ -1,5 +1,6 @@
 import {promisify} from 'util';
 import dns from 'dns';
+import http from 'http';
 import test from 'ava';
 import isReachable from '.';
 
@@ -26,6 +27,20 @@ test('multiple https urls', async t => {
 	t.true(await isReachable(['https://google.com', 'https://baidu.com']));
 });
 
+test('http server on custom port', async t => {
+	const server = http.createServer((_, res) => {
+		res.writeHead(200, {'Content-Type': 'text/plain'}).end();
+	}).listen(8080);
+
+	t.true(await isReachable('http://localhost:8080', {forceHttpCheck: true}));
+
+	server.close();
+});
+
+test('unreachable http server on custom port', async t => {
+	t.false(await isReachable('http://localhost:8081', {forceHttpCheck: true}));
+});
+
 test('ftp host and port', async t => {
 	t.true(await isReachable('speedtest.tele2.net:21'));
 });
@@ -37,7 +52,6 @@ test('imap host and port', async t => {
 test('unreachable hostname', async t => {
 	t.false(await isReachable('343645335341233123125235623452344123.local'));
 });
-
 test('unknown service', async t => {
 	t.false(await isReachable('343645335341233123125235623452344123.local:-1'));
 });

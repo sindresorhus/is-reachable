@@ -54,6 +54,12 @@ Default: `5000`
 
 Timeout in milliseconds after which a request is considered failed.
 
+##### forceHttpCheck
+
+Type: `boolean`<br>
+Default: `false`
+
+Perform an HTTP check even if one or more targets is not on 80 or 443 port.
 
 ## Related
 
