@@ -29,7 +29,8 @@ test('multiple https urls', async t => {
 
 test('http server on custom port', async t => {
 	const server = http.createServer((_, res) => {
-		res.writeHead(200, {'Content-Type': 'text/plain'}).end();
+		res.writeHead(200);
+		res.end();
 	}).listen(8080);
 
 	t.true(await isReachable('http://localhost:8080', {forceHttpCheck: true}));
