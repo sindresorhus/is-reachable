@@ -40,7 +40,7 @@
 	],
 	"dependencies": {
 		"arrify": "^2.0.1",
-		"got": "^9.6.0",
+		"got": "^11.7.0",
 		"is-port-reachable": "^2.0.1",
 		"p-any": "^2.1.0",
 		"p-timeout": "^3.2.0",

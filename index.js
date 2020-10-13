@@ -13,10 +13,16 @@ const URL = require('url-parse');
 
 const dnsLookupP = promisify(dns.lookup);
 
-const checkHttp = async url => {
+const checkHttp = async (url, timeout) => {
 	let response;
 	try {
-		response = await got(url, {rejectUnauthorized: false});
+		response = await got(url, {
+			https: {
+				rejectUnauthorized: false
+			},
+			retry: 0,
+			timeout
+		});
 	} catch (_) {
 		return false;
 	}
@@ -32,7 +38,7 @@ const checkHttp = async url => {
 
 const getAddress = async hostname => net.isIP(hostname) ? hostname : (await dnsLookupP(hostname)).address;
 
-const isTargetReachable = async target => {
+const isTargetReachable = timeout => async target => {
 	const url = new URL(prependHttp(target));
 
 	if (!url.port) {
@@ -51,7 +57,7 @@ const isTargetReachable = async target => {
 	}
 
 	if ([80, 443].includes(url.port)) {
-		return checkHttp(url.toString());
+		return checkHttp(url.toString(), timeout);
 	}
 
 	return isPortReachable(url.port, {host: address});
@@ -61,6 +67,6 @@ module.exports = async (destinations, options) => {
 	options = {...options};
 	options.timeout = typeof options.timeout === 'number' ? options.timeout : 5000;
 
-	const promise = pAny(arrify(destinations).map(isTargetReachable));
+	const promise = pAny(arrify(destinations).map(isTargetReachable(options.timeout)));
 	return pTimeout(promise, options.timeout).catch(() => false);
 };
