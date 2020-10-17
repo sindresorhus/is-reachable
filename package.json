@@ -4,10 +4,11 @@
 	"description": "Check if servers are reachable",
 	"license": "MIT",
 	"repository": "sindresorhus/is-reachable",
+	"funding": "https://github.com/sponsors/sindresorhus",
 	"author": {
 		"name": "Sindre Sorhus",
 		"email": "sindresorhus@gmail.com",
-		"url": "sindresorhus.com"
+		"url": "https://sindresorhus.com"
 	},
 	"engines": {
 		"node": ">=10"
@@ -41,8 +42,8 @@
 	"dependencies": {
 		"arrify": "^2.0.1",
 		"got": "^11.7.0",
-		"is-port-reachable": "^2.0.1",
-		"p-any": "^2.1.0",
+		"is-port-reachable": "^3.0.0",
+		"p-any": "^3.0.0",
 		"p-timeout": "^3.2.0",
 		"prepend-http": "^3.0.1",
 		"router-ips": "^1.0.0",
@@ -50,8 +51,8 @@
 	},
 	"devDependencies": {
 		"ava": "^2.4.0",
-		"tsd": "^0.8.0",
-		"xo": "^0.24.0"
+		"tsd": "^0.13.1",
+		"xo": "^0.34.0"
 	},
 	"browser": "browser.js"
 }

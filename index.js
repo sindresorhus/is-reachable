@@ -23,13 +23,13 @@ const checkHttp = async (url, timeout) => {
 			retry: 0,
 			timeout
 		});
-	} catch (_) {
+	} catch {
 		return false;
 	}
 
 	if (response.headers && response.headers.location) {
 		const url = new URL(response.headers.location);
-		const hostname = url.hostname.replace(/^\[/, '').replace(/\]$/, ''); // Strip [] from IPv6
+		const hostname = url.hostname.replace(/^\[/, '').replace(/]$/, ''); // Strip [] from IPv6
 		return !routerIps.has(hostname);
 	}
 
@@ -48,7 +48,7 @@ const isTargetReachable = timeout => async target => {
 	let address;
 	try {
 		address = await getAddress(url.hostname);
-	} catch (_) {
+	} catch {
 		return false;
 	}
 
@@ -63,10 +63,12 @@ const isTargetReachable = timeout => async target => {
 	return isPortReachable(url.port, {host: address});
 };
 
-module.exports = async (destinations, options) => {
-	options = {...options};
-	options.timeout = typeof options.timeout === 'number' ? options.timeout : 5000;
+module.exports = async (destinations, {timeout = 5000} = {}) => {
+	const promise = pAny(arrify(destinations).map(isTargetReachable(timeout)));
 
-	const promise = pAny(arrify(destinations).map(isTargetReachable(options.timeout)));
-	return pTimeout(promise, options.timeout).catch(() => false);
+	try {
+		return await pTimeout(promise, timeout);
+	} catch {
+		return false;
+	}
 };

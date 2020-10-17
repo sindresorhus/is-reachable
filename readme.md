@@ -1,4 +1,4 @@
-# is-reachable [![Build Status](https://travis-ci.org/sindresorhus/is-reachable.svg?branch=master)](https://travis-ci.org/sindresorhus/is-reachable)
+# is-reachable [![Build Status](https://travis-ci.com/sindresorhus/is-reachable.svg?branch=master)](https://travis-ci.com/github/sindresorhus/is-reachable)
 
 > Check if servers are reachable
 
@@ -8,13 +8,11 @@ The Node.js version will do a TCP handshake with the target's port. It attempts 
 
 The browser version is limited by the fact that browsers cannot connect to arbitrary ports. It only supports HTTP and HTTPS and the check relies on the `/favicon.ico` path being present.
 
-
 ## Install
 
 ```
 $ npm install is-reachable
 ```
-
 
 ## Usage
 
@@ -29,7 +27,6 @@ const isReachable = require('is-reachable');
 	//=> true
 })();
 ```
-
 
 ## API
 
@@ -49,16 +46,14 @@ Type: `object`
 
 ##### timeout
 
-Type: `number`<br>
+Type: `number`\
 Default: `5000`
 
 Timeout in milliseconds after which a request is considered failed.
 
-
 ## Related
 
 - [is-online](https://github.com/sindresorhus/is-online) - Check if the internet connection is up
-
 
 ## Maintainers
 
