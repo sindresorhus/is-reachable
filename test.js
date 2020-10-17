@@ -26,10 +26,6 @@ test('multiple https urls', async t => {
 	t.true(await isReachable(['https://google.com', 'https://baidu.com']));
 });
 
-test('ftp host and port', async t => {
-	t.true(await isReachable('speedtest.tele2.net:21'));
-});
-
 test('imap host and port', async t => {
 	t.true(await isReachable('imap.gmail.com:995'));
 });
