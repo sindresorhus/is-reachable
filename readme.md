@@ -1,4 +1,4 @@
-# is-reachable [![Build Status](https://travis-ci.com/sindresorhus/is-reachable.svg?branch=master)](https://travis-ci.com/github/sindresorhus/is-reachable)
+# is-reachable
 
 > Check if servers are reachable
 
