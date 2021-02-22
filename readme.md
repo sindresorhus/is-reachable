@@ -51,6 +51,8 @@ Default: `5000`
 
 Timeout in milliseconds after which a request is considered failed.
 
+*Node.js only*
+
 ## Related
 
 - [is-online](https://github.com/sindresorhus/is-online) - Check if the internet connection is up

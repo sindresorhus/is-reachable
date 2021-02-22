@@ -4,6 +4,8 @@ declare namespace isReachable {
 		Timeout in milliseconds after which a request is considered failed.
 
 		@default 5000
+
+		_Node.js only_
 		*/
 		readonly timeout?: number;
 	}
