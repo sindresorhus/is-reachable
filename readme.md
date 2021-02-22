@@ -44,6 +44,8 @@ One or more targets to check. Can either be `hostname:port`, a URL like `https:/
 
 Type: `object`
 
+only works in node
+
 ##### timeout
 
 Type: `number`\
