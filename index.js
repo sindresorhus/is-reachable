@@ -20,7 +20,6 @@ const checkHttp = async (url, timeout) => {
 			https: {
 				rejectUnauthorized: false
 			},
-			retry: 0,
 			timeout
 		});
 	} catch {
