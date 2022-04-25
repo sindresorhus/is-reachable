@@ -1,5 +1,6 @@
 import {promisify} from 'util';
 import dns from 'dns';
+import http from 'http';
 import test from 'ava';
 import isReachable from '.';
 
@@ -24,6 +25,18 @@ test('ip and protocol', async t => {
 
 test('multiple https urls', async t => {
 	t.true(await isReachable(['https://google.com', 'https://baidu.com']));
+});
+
+test('http server on custom port', async t => {
+	const server = http.createServer((_, response) => {
+		response.writeHead(200).end();
+	}).listen(8080);
+	t.true(await isReachable('http://localhost:8080'));
+	server.close();
+});
+
+test('unreachable http server on custom port', async t => {
+	t.false(await isReachable('http://localhost:8081'));
 });
 
 test('imap host and port', async t => {
