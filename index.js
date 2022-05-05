@@ -38,10 +38,11 @@ const checkHttp = async (url, timeout) => {
 const getAddress = async hostname => net.isIP(hostname) ? hostname : (await dnsLookupP(hostname)).address;
 
 const isTargetReachable = timeout => async target => {
+	const isHTTP = target.startsWith('https://') || target.startsWith('http://');
 	const url = new URL(prependHttp(target));
 
-	if (!url.port) {
-		url.port = url.protocol === 'http:' ? 80 : 443;
+	if (!url.port && !isHTTP) {
+		url.port = 443;
 	}
 
 	let address;
@@ -55,7 +56,7 @@ const isTargetReachable = timeout => async target => {
 		return false;
 	}
 
-	if ([80, 443].includes(url.port)) {
+	if (isHTTP) {
 		return checkHttp(url.toString(), timeout);
 	}
 
