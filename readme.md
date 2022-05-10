@@ -26,6 +26,15 @@ const isReachable = require('is-reachable');
 	console.log(await isReachable('google.com:443'));
 	//=> true
 })();
+
+or using Promises without await
+
+isReachable('sindresorhus.com').then((online) => {
+        if (online) {
+		console.log(Server is up!');
+	} else {
+		console.log(Server is down!');
+	}
 ```
 
 ## API
