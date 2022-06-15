@@ -47,7 +47,7 @@
 		"p-timeout": "^3.2.0",
 		"prepend-http": "^3.0.1",
 		"router-ips": "^1.0.0",
-		"url-parse": "^1.5.3"
+		"url-parse": "^1.5.10"
 	},
 	"devDependencies": {
 		"ava": "^2.4.0",
