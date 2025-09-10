@@ -46,6 +46,7 @@
 		"socket"
 	],
 	"dependencies": {
+		"fetch-extras": "^1.0.0",
 		"is-port-reachable": "^4.0.0",
 		"prepend-http": "^4.0.0",
 		"router-ips": "^2.0.0"

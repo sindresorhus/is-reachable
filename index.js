@@ -1,6 +1,7 @@
 import {promisify} from 'node:util';
 import dns from 'node:dns';
 import net from 'node:net';
+import {withTimeout} from 'fetch-extras';
 import isPortReachable from 'is-port-reachable';
 import prependHttp from 'prepend-http';
 import routerIps from 'router-ips';
@@ -8,6 +9,9 @@ import routerIps from 'router-ips';
 const dnsLookup = promisify(dns.lookup);
 
 const getDefaultPort = protocol => protocol === 'http:' ? 80 : 443;
+
+// Use reasonable default timeout (30 seconds) while still respecting user AbortSignal
+const enhancedFetch = withTimeout(fetch, 30_000);
 
 const normalizeTarget = target => {
 	const isHttp = target.startsWith('https://') || target.startsWith('http://');
@@ -27,10 +31,11 @@ const resolveAddress = async hostname => {
 
 const checkHttpReachability = async (url, signal) => {
 	try {
-		const response = await fetch(url, {signal});
+		// Try HEAD request first for better performance and bandwidth efficiency
+		const headResponse = await enhancedFetch(url, {method: 'HEAD', signal});
 
 		// Check for redirects to router IPs (captive portal detection)
-		const location = response.headers.get('location');
+		const location = headResponse.headers.get('location');
 		if (location) {
 			const {hostname} = new URL(location);
 			// Strip brackets from IPv6 addresses
@@ -38,7 +43,24 @@ const checkHttpReachability = async (url, signal) => {
 			return !routerIps.has(cleanHostname);
 		}
 
-		return response.ok;
+		// If HEAD succeeded or failed with a definitive status, use that result
+		if (headResponse.ok || (headResponse.status !== 405 && headResponse.status !== 501)) {
+			return headResponse.ok;
+		}
+
+		// HEAD not supported (405/501), fall back to GET request
+		const getResponse = await enhancedFetch(url, {signal});
+
+		// Check for redirects to router IPs again for GET request
+		const getLocation = getResponse.headers.get('location');
+		if (getLocation) {
+			const {hostname} = new URL(getLocation);
+			// Strip brackets from IPv6 addresses
+			const cleanHostname = hostname.replace(/^\[/, '').replace(/]$/, '');
+			return !routerIps.has(cleanHostname);
+		}
+
+		return getResponse.ok;
 	} catch {
 		return false;
 	}
