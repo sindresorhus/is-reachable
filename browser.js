@@ -2,11 +2,15 @@
 /* global Image */
 import prependHttp from 'prepend-http';
 
-const checkTarget = (target, signal) => new Promise(resolve => {
-	const url = new URL(prependHttp(target));
-	const {hostname, protocol = '', port} = url;
-	const portSuffix = port ? `:${port}` : '';
+const faviconPaths = [
+	'/favicon.ico',
+	'/favicon.png',
+	'/favicon.svg',
+	'/apple-touch-icon.png',
+	'/apple-touch-icon-precomposed.png',
+];
 
+const checkSinglePath = (baseUrl, path, signal) => new Promise(resolve => {
 	const image = new Image();
 
 	const cleanup = result => {
@@ -20,8 +24,26 @@ const checkTarget = (target, signal) => new Promise(resolve => {
 
 	image.addEventListener('load', () => cleanup(true));
 	image.addEventListener('error', () => cleanup(false));
-	image.src = `${protocol}//${hostname}${portSuffix}/favicon.ico?${Date.now()}`;
+	image.src = `${baseUrl}${path}?${Date.now()}`;
 });
+
+const checkTarget = async (target, signal) => {
+	const url = new URL(prependHttp(target));
+	const {hostname, protocol = '', port} = url;
+	const portSuffix = port ? `:${port}` : '';
+	const baseUrl = `${protocol}//${hostname}${portSuffix}`;
+
+	// Try all favicon paths concurrently, return true if any succeeds
+	const pathPromises = faviconPaths.map(path => checkSinglePath(baseUrl, path, signal));
+
+	try {
+		await Promise.any(pathPromises);
+		return true;
+	} catch {
+		// All paths failed
+		return false;
+	}
+};
 
 export default async function isReachable(destinations, {signal} = {}) {
 	const targets = Array.isArray(destinations) ? destinations.flat() : [destinations];

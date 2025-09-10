@@ -6,7 +6,7 @@ Works in Node.js and the browser *(with a bundler)*.
 
 The Node.js version will do a TCP handshake with the target's port. It attempts to detect cases where a router redirects the request to itself.
 
-The browser version is limited by the fact that browsers cannot connect to arbitrary ports. It only supports HTTP and HTTPS and the check relies on the `/favicon.ico` path being present.
+The browser version is limited by the fact that browsers cannot connect to arbitrary ports. It only supports HTTP and HTTPS and tries to load common favicon paths (`/favicon.ico`, `/favicon.png`, `/favicon.svg`, `/apple-touch-icon.png`, `/apple-touch-icon-precomposed.png`) to determine reachability.
 
 ## Install
 

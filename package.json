@@ -3,7 +3,6 @@
 	"version": "5.2.1",
 	"description": "Check if servers are reachable",
 	"license": "MIT",
-	"type": "module",
 	"repository": "sindresorhus/is-reachable",
 	"funding": "https://github.com/sponsors/sindresorhus",
 	"author": {
