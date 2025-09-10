@@ -3,6 +3,7 @@
 	"version": "5.2.1",
 	"description": "Check if servers are reachable",
 	"license": "MIT",
+	"type": "module",
 	"repository": "sindresorhus/is-reachable",
 	"funding": "https://github.com/sponsors/sindresorhus",
 	"author": {
@@ -10,11 +11,17 @@
 		"email": "sindresorhus@gmail.com",
 		"url": "https://sindresorhus.com"
 	},
+	"type": "module",
+	"exports": {
+		"types": "./index.d.ts",
+		"default": "./index.js"
+	},
+	"sideEffects": false,
 	"engines": {
-		"node": ">=10"
+		"node": ">=20"
 	},
 	"scripts": {
-		"test": "xo && ava test.js && tsd"
+		"test": "xo && node --test test.js"
 	},
 	"files": [
 		"index.js",
@@ -40,19 +47,12 @@
 		"socket"
 	],
 	"dependencies": {
-		"arrify": "^2.0.1",
-		"got": "^11.7.0",
-		"is-port-reachable": "^3.0.0",
-		"p-any": "^3.0.0",
-		"p-timeout": "^3.2.0",
-		"prepend-http": "^3.0.1",
-		"router-ips": "^1.0.0",
-		"url-parse": "^1.5.10"
+		"is-port-reachable": "^4.0.0",
+		"prepend-http": "^4.0.0",
+		"router-ips": "^2.0.0"
 	},
 	"devDependencies": {
-		"ava": "^2.4.0",
-		"tsd": "^0.13.1",
-		"xo": "^0.34.0"
+		"xo": "^1.2.2"
 	},
 	"browser": "browser.js"
 }

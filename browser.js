@@ -1,20 +1,36 @@
 /* eslint-env browser */
-'use strict';
-const arrify = require('arrify');
-const pAny = require('p-any');
-const prependHttp = require('prepend-http');
-const URL = require('url-parse');
+/* global Image */
+import prependHttp from 'prepend-http';
 
-module.exports = async hosts => {
-	return pAny(arrify(hosts).map(url => {
-		return new Promise(resolve => {
-			let {hostname, protocol = '', port} = new URL(prependHttp(url));
-			port = port ? `:${port}` : '';
+const checkTarget = (target, signal) => new Promise(resolve => {
+	const url = new URL(prependHttp(target));
+	const {hostname, protocol = '', port} = url;
+	const portSuffix = port ? `:${port}` : '';
 
-			const image = new Image();
-			image.addEventListener('load', () => resolve(true));
-			image.addEventListener('error', () => resolve(false));
-			image.src = `${protocol}//${hostname}${port}/favicon.ico?${Date.now()}`;
-		});
-	}));
-};
+	const image = new Image();
+
+	const cleanup = result => {
+		resolve(result);
+	};
+
+	// Handle abort signal
+	if (signal) {
+		signal.addEventListener('abort', () => cleanup(false), {once: true});
+	}
+
+	image.addEventListener('load', () => cleanup(true));
+	image.addEventListener('error', () => cleanup(false));
+	image.src = `${protocol}//${hostname}${portSuffix}/favicon.ico?${Date.now()}`;
+});
+
+export default async function isReachable(destinations, {signal} = {}) {
+	const targets = Array.isArray(destinations) ? destinations.flat() : [destinations];
+	const promises = targets.map(target => checkTarget(target, signal));
+
+	try {
+		return await Promise.any(promises);
+	} catch {
+		// Promise.any throws AggregateError when all promises reject
+		return false;
+	}
+}

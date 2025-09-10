@@ -1,14 +1,34 @@
 declare namespace isReachable {
-	interface Options {
+	type Options = {
 		/**
-		Timeout in milliseconds after which a request is considered failed.
+		An `AbortSignal` to cancel the requests.
 
-		@default 5000
+		You can use `AbortSignal.timeout()` to create a signal that aborts after a specified time.
 
-		_Node.js only_
+		@example
+		```
+		import isReachable from 'is-reachable';
+
+		// With timeout
+		await isReachable('sindresorhus.com', {
+			signal: AbortSignal.timeout(3000)
+		});
+		```
+
+		Or combine multiple signals using `AbortSignal.any()`:
+
+		@example
+		```
+		const controller = new AbortController();
+		const timeoutSignal = AbortSignal.timeout(5000);
+
+		await isReachable('example.com', {
+			signal: AbortSignal.any([controller.signal, timeoutSignal])
+		});
+		```
 		*/
-		readonly timeout?: number;
-	}
+		readonly signal?: AbortSignal;
+	};
 }
 
 /**
@@ -23,15 +43,19 @@ The browser version is limited by the fact that browsers cannot connect to arbit
 
 @example
 ```
-import isReachable = require('is-reachable');
+import isReachable from 'is-reachable';
 
-(async () => {
-	console.log(await isReachable('sindresorhus.com'));
-	//=> true
+console.log(await isReachable('sindresorhus.com'));
+//=> true
 
-	console.log(await isReachable('google.com:80'));
-	//=> true
-})();
+console.log(await isReachable('google.com:443'));
+//=> true
+
+// With timeout
+console.log(await isReachable('sindresorhus.com', {
+	signal: AbortSignal.timeout(3000)
+}));
+//=> true
 ```
 */
 declare function isReachable(
@@ -39,4 +63,4 @@ declare function isReachable(
 	options?: isReachable.Options
 ): Promise<boolean>;
 
-export = isReachable;
+export default isReachable;

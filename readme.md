@@ -10,22 +10,26 @@ The browser version is limited by the fact that browsers cannot connect to arbit
 
 ## Install
 
-```
-$ npm install is-reachable
+```sh
+npm install is-reachable
 ```
 
 ## Usage
 
 ```js
-const isReachable = require('is-reachable');
+import isReachable from 'is-reachable';
 
-(async () => {
-	console.log(await isReachable('sindresorhus.com'));
-	//=> true
+console.log(await isReachable('sindresorhus.com'));
+//=> true
 
-	console.log(await isReachable('google.com:443'));
-	//=> true
-})();
+console.log(await isReachable('google.com:443'));
+//=> true
+
+// With timeout
+console.log(await isReachable('sindresorhus.com', {
+	signal: AbortSignal.timeout(3000)
+}));
+//=> true
 ```
 
 ## API
@@ -44,14 +48,30 @@ One or more targets to check. Can either be `hostname:port`, a URL like `https:/
 
 Type: `object`
 
-##### timeout
+##### signal
 
-Type: `number`\
-Default: `5000`
+Type: `AbortSignal`
 
-Timeout in milliseconds after which a request is considered failed.
+An `AbortSignal` to cancel the requests.
 
-*Node.js only*
+You can use `AbortSignal.timeout()` to create a signal that automatically aborts after a specified time:
+
+```js
+await isReachable('sindresorhus.com', {
+	signal: AbortSignal.timeout(3000)
+});
+```
+
+Or combine multiple signals using `AbortSignal.any()`:
+
+```js
+const controller = new AbortController();
+const timeoutSignal = AbortSignal.timeout(5000);
+
+await isReachable('example.com', {
+	signal: AbortSignal.any([controller.signal, timeoutSignal])
+});
+```
 
 ## Related
 
