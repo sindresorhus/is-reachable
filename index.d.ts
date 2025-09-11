@@ -28,6 +28,19 @@ declare namespace isReachable {
 		```
 		*/
 		readonly signal?: AbortSignal;
+
+		/**
+		Only consider the server reachable if it returns a successful HTTP status code (200-299).
+
+		@default false
+
+		When `false` (default), any HTTP response (including 4xx and 5xx) is considered reachable, as it proves the server is responding. This aligns with the network-level definition of "reachability".
+
+		When `true`, only successful HTTP responses (2xx status codes) are considered reachable, which is useful for application health checks.
+
+		@note This option is not supported in browsers. The browser version always behaves as if this option is `true`.
+		*/
+		readonly requireHttpSuccess?: boolean;
 	};
 }
 
@@ -36,7 +49,9 @@ Check if servers are reachable.
 
 The Node.js version will do a TCP handshake with the target's port. It attempts to detect cases where a router redirects the request to itself.
 
-The browser version is limited by the fact that browsers cannot connect to arbitrary ports. It only supports HTTP and HTTPS and the check relies on the `/favicon.ico` path being present.
+The browser version is limited by the fact that browsers cannot connect to arbitrary ports. It only supports HTTP and HTTPS and the check relies on favicon paths being present. The browser version does not support the `requireHttpSuccess` option.
+
+**Note:** By default, any HTTP response (including 4xx and 5xx) is considered "reachable" since it proves the server is responding. Use `requireHttpSuccess: true` if you need to check for successful responses only.
 
 @param targets - One or more targets to check. Can either be `hostname:port`, a URL like `https://hostname:port` or even just `hostname`. `port` must be specified if protocol is not `http:` or `https:` and defaults to `443`. Protocols other than `http:` and `https:` are not supported.
 @returns Whether any of the `targets` are reachable.

@@ -10,49 +10,61 @@ const faviconPaths = [
 	'/apple-touch-icon-precomposed.png',
 ];
 
-const checkSinglePath = (baseUrl, path, signal) => new Promise(resolve => {
+const checkSinglePath = (origin, path, signal) => new Promise(resolve => {
+	let done = false;
 	const image = new Image();
 
-	const cleanup = result => {
+	const finalize = result => {
+		if (done) {
+			return;
+		}
+
+		done = true;
+		image.removeEventListener('load', onLoad);
+		image.removeEventListener('error', onError);
+		signal?.removeEventListener?.('abort', onAbort);
+
+		// Stop the request if still pending
+		try {
+			image.src = '';
+		} catch {}
+
 		resolve(result);
 	};
 
-	// Handle abort signal
+	const onLoad = () => finalize(true);
+	const onError = () => finalize(false);
+	const onAbort = () => finalize(false);
+
 	if (signal) {
-		signal.addEventListener('abort', () => cleanup(false), {once: true});
+		signal.addEventListener('abort', onAbort, {once: true});
 	}
 
-	image.addEventListener('load', () => cleanup(true));
-	image.addEventListener('error', () => cleanup(false));
-	image.src = `${baseUrl}${path}?${Date.now()}`;
+	image.addEventListener('load', onLoad, {once: true});
+	image.addEventListener('error', onError, {once: true});
+	image.src = `${origin}${path}?${Date.now()}`;
 });
 
-const checkTarget = async (target, signal) => {
-	const url = new URL(prependHttp(target));
-	const {hostname, protocol = '', port} = url;
-	const portSuffix = port ? `:${port}` : '';
-	const baseUrl = `${protocol}//${hostname}${portSuffix}`;
+const checkTarget = async (input, signal) => {
+	const url = new URL(prependHttp(input));
+	const {origin} = url;
 
-	// Try all favicon paths concurrently, return true if any succeeds
-	const pathPromises = faviconPaths.map(path => checkSinglePath(baseUrl, path, signal));
+	const probes = faviconPaths.map(path => checkSinglePath(origin, path, signal));
 
 	try {
-		await Promise.any(pathPromises);
+		await Promise.any(probes);
 		return true;
 	} catch {
-		// All paths failed
 		return false;
 	}
 };
 
 export default async function isReachable(destinations, {signal} = {}) {
 	const targets = Array.isArray(destinations) ? destinations.flat() : [destinations];
-	const promises = targets.map(target => checkTarget(target, signal));
 
 	try {
-		return await Promise.any(promises);
+		return await Promise.any(targets.map(target => checkTarget(target, signal)));
 	} catch {
-		// Promise.any throws AggregateError when all promises reject
 		return false;
 	}
 }
