@@ -88,3 +88,19 @@ test('port 80 should use HTTP', async () => {
 	// Regression test: port 80 should be treated as HTTP
 	assert.ok(await isReachable('google.com:80'));
 });
+
+test('Promise.any logic - fast false cannot mask later true', async () => {
+	// This test verifies the Promise.any fix works correctly
+	// Create a scenario where one target fails fast but another succeeds slower
+	const {default: isReachableFunction} = await import('./index.js');
+	const testPromise = isReachableFunction(['fake-fast-fail.invalid', 'google.com']);
+
+	// The result should be true because google.com is reachable
+	// even though fake-fast-fail.invalid fails immediately
+	assert.ok(await testPromise);
+});
+
+test('HTTP redirect detection', async () => {
+	// Test that HTTP redirects work correctly (google.com redirects to HTTPS)
+	assert.ok(await isReachable('http://google.com'));
+});

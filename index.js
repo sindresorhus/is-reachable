@@ -6,51 +6,39 @@ import routerIps from 'router-ips';
 
 const enhancedFetch = withTimeout(fetch, 30_000);
 
-const isRedirectStatus = code => code === 301 || code === 302 || code === 303 || code === 307 || code === 308;
+const isRedirectStatus = code => code >= 300 && code < 400;
 
 const stripBrackets = host =>
 	host.startsWith('[') && host.endsWith(']') ? host.slice(1, -1) : host;
 
-const authorityFor = url => {
-	const host = net.isIPv6(url.hostname) ? `[${url.hostname}]` : url.hostname;
-	return url.port ? `${host}:${url.port}` : host;
+const parseTarget = input => {
+	const isExplicitHttp = input.startsWith('http://') || input.startsWith('https://');
+
+	// Handle IPv6 addresses that need brackets for URL parsing
+	const normalizedInput = !isExplicitHttp && net.isIPv6(input) ? `[${input}]` : input;
+	const url = new URL(prependHttp(normalizedInput));
+
+	return {url, isExplicitHttp};
 };
 
-const normalizedTarget = input => {
-	const originallyHttp = input.startsWith('http://') || input.startsWith('https://');
+const buildHttpUrl = (url, isExplicitHttp) => {
+	if (isExplicitHttp) {
+		return url.href;
+	}
 
-	// IPv6 raw input must be bracketed to be URL-parsable when we prepend http
-	const needsBrackets = !originallyHttp && net.isIPv6(input);
-	const inputForUrl = needsBrackets ? `[${input}]` : input;
+	const port = url.port ? Number(url.port) : (url.protocol === 'https:' ? 443 : 80);
 
-	const url = new URL(prependHttp(inputForUrl));
-	return {url, originallyHttp};
+	// Only treat standard ports as HTTP(S)
+	if (port === 80 || port === 443) {
+		const protocol = port === 443 ? 'https:' : 'http:';
+		const host = net.isIPv6(url.hostname) ? `[${url.hostname}]` : url.hostname;
+		return `${protocol}//${host}${url.pathname}${url.search}`;
+	}
+
+	return null; // Not an HTTP(S) target
 };
 
-const effectiveHttpUrlFor = (baseUrl, originallyHttp) => {
-	const port = baseUrl.port ? Number(baseUrl.port) : (baseUrl.protocol === 'https:' ? 443 : 80);
-
-	if (originallyHttp) {
-		return baseUrl.href;
-	}
-
-	if (port === 80) {
-		const authority = authorityFor(baseUrl);
-		const path = `${baseUrl.pathname || '/'}${baseUrl.search || ''}`;
-		return `http://${authority}${path}`;
-	}
-
-	if (port === 443) {
-		const authority = authorityFor(baseUrl);
-		const path = `${baseUrl.pathname || '/'}${baseUrl.search || ''}`;
-		return `https://${authority}${path}`;
-	}
-
-	return null; // Not HTTP(S)
-};
-
-const redirectedToRouter = (response, requestUrlString) => {
-	// When redirect: 'manual', 3xx keeps Location header (may be relative)
+const isRouterRedirect = (response, requestUrl) => {
 	if (!isRedirectStatus(response.status)) {
 		return false;
 	}
@@ -60,80 +48,88 @@ const redirectedToRouter = (response, requestUrlString) => {
 		return false;
 	}
 
-	const absolute = new URL(location, requestUrlString);
-	const host = stripBrackets(absolute.hostname);
-	return routerIps.has(host);
+	try {
+		const redirectUrl = new URL(location, requestUrl);
+		return routerIps.has(stripBrackets(redirectUrl.hostname));
+	} catch {
+		return false;
+	}
 };
 
-const checkHttpReachability = async (urlString, signal, requireHttpSuccess) => {
-	// Prefer HEAD for speed, without auto-follow
-	let head;
-	try {
-		head = await enhancedFetch(urlString, {method: 'HEAD', redirect: 'manual', signal});
-	} catch {
-		head = null;
-	}
+const checkHttp = async (url, signal, requireHttpSuccess) => {
+	const fetchOptions = {redirect: 'manual', signal};
 
-	if (head) {
-		if (redirectedToRouter(head, urlString)) {
+	// Try HEAD first for better performance
+	try {
+		const response = await enhancedFetch(url, {method: 'HEAD', ...fetchOptions});
+
+		if (isRouterRedirect(response, url)) {
 			return false;
 		}
 
-		// If HEAD is supported (not 405/501), treat any response as reachable unless strict success is required
-		if (head.status !== 405 && head.status !== 501) {
-			return requireHttpSuccess ? head.ok : true;
+		// HEAD is supported, use this response
+		if (response.status !== 405 && response.status !== 501) {
+			return requireHttpSuccess ? response.ok : true;
 		}
-	}
-
-	// Fallback to GET, still without auto-follow to inspect redirects
-	let get;
-	try {
-		get = await enhancedFetch(urlString, {redirect: 'manual', signal});
 	} catch {
-		get = null;
+		// HEAD request failed, will try GET below
 	}
 
-	if (!get) {
+	// Fallback to GET
+	try {
+		const response = await enhancedFetch(url, fetchOptions);
+
+		if (isRouterRedirect(response, url)) {
+			return false;
+		}
+
+		return requireHttpSuccess ? response.ok : true;
+	} catch {
 		return false;
 	}
-
-	if (redirectedToRouter(get, urlString)) {
-		return false;
-	}
-
-	return requireHttpSuccess ? get.ok : true;
 };
 
 const checkTarget = async (input, signal, requireHttpSuccess) => {
-	const {url, originallyHttp} = normalizedTarget(input);
+	try {
+		const {url, isExplicitHttp} = parseTarget(input);
 
-	// If it's HTTP(S), or if it's a bare host on 80/443, do HTTP probe
-	const httpUrl = effectiveHttpUrlFor(url, originallyHttp);
-	if (httpUrl) {
-		return checkHttpReachability(httpUrl, signal, requireHttpSuccess);
+		// Check if this should be treated as HTTP(S)
+		const httpUrl = buildHttpUrl(url, isExplicitHttp);
+		if (httpUrl) {
+			return checkHttp(httpUrl, signal, requireHttpSuccess);
+		}
+
+		// Non-HTTP port: use TCP probe
+		const port = Number(url.port || 443);
+		return isPortReachable(port, {host: url.hostname});
+	} catch {
+		return false;
 	}
-
-	// Non-HTTP(S) port: TCP probe
-	const port = Number(url.port || 443);
-	return isPortReachable(port, {host: url.hostname});
 };
 
 export default async function isReachable(destinations, {signal, requireHttpSuccess = false} = {}) {
 	const targets = Array.isArray(destinations) ? destinations.flat() : [destinations];
 
-	// Early abort support
 	if (signal?.aborted) {
 		return false;
 	}
 
 	const controller = new AbortController();
-	const combined = signal ? AbortSignal.any([signal, controller.signal]) : controller.signal;
+	const combinedSignal = signal ? AbortSignal.any([signal, controller.signal]) : controller.signal;
 
 	try {
-		const result = await Promise.any(targets.map(target => checkTarget(target, combined, requireHttpSuccess)));
-		// Best-effort cancel remaining HTTP fetches
+		// Use Promise.any correctly: only resolve true, reject false
+		await Promise.any(targets.map(async target => {
+			const isReachable = await checkTarget(target, combinedSignal, requireHttpSuccess);
+			if (isReachable) {
+				return true;
+			}
+
+			throw new Error('not reachable');
+		}));
+
 		controller.abort();
-		return result;
+		return true;
 	} catch {
 		controller.abort();
 		return false;

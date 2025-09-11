@@ -47,7 +47,7 @@ declare namespace isReachable {
 /**
 Check if servers are reachable.
 
-The Node.js version will do a TCP handshake with the target's port. It attempts to detect cases where a router redirects the request to itself.
+The Node.js version uses HTTP HEAD/GET requests for HTTP(S) URLs and TCP connections for other ports. It attempts to detect cases where a router redirects the request to itself.
 
 The browser version is limited by the fact that browsers cannot connect to arbitrary ports. It only supports HTTP and HTTPS and the check relies on favicon paths being present. The browser version does not support the `requireHttpSuccess` option.
 

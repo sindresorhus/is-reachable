@@ -4,7 +4,7 @@
 
 Works in Node.js and the browser *(with a bundler)*.
 
-The Node.js version will do a TCP handshake with the target's port. For HTTP/HTTPS URLs, it uses HEAD requests first (for better performance and bandwidth efficiency), falling back to GET requests if HEAD is not supported. It attempts to detect cases where a router redirects the request to itself.
+The Node.js version uses HTTP HEAD/GET requests for HTTP(S) URLs and TCP connections for other ports. For HTTP(S), it tries HEAD requests first (for better performance and bandwidth efficiency), falling back to GET requests if HEAD is not supported. It attempts to detect cases where a router redirects the request to itself.
 
 The browser version is limited by the fact that browsers cannot connect to arbitrary ports. It only supports HTTP and HTTPS and tries to load common favicon paths (`/favicon.ico`, `/favicon.png`, `/favicon.svg`, `/apple-touch-icon.png`, `/apple-touch-icon-precomposed.png`) to determine reachability. The browser version does not support the `requireHttpSuccess` option and will only return `true` if the favicon files load successfully (equivalent to `requireHttpSuccess: true`).
 
