@@ -45,7 +45,7 @@ Returns a `Promise<boolean>` which is `true` if any of the `targets` are reachab
 
 Type: `string | string[]`
 
-One or more targets to check. Can either be `hostname:port`, a URL like `https://hostname:port` or even just `hostname`. `port` must be specified if protocol is not `http:` or `https:` and defaults to `443`. Protocols other than `http:` and `https:` are not supported.
+One or more targets to check. Can either be `hostname:port`, an IP address like `1.2.3.4` or `1.2.3.4:port`, a URL like `https://hostname:port`, or even just `hostname`. `port` must be specified if protocol is not `http:` or `https:` and defaults to `443`. Protocols other than `http:` and `https:` are not supported. Bare IP addresses default to HTTP.
 
 #### options
 

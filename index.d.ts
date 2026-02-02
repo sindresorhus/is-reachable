@@ -27,7 +27,7 @@ declare namespace isReachable {
 		});
 		```
 		*/
-		readonly signal?: AbortSignal;
+		readonly signal?: AbortSignal | undefined;
 
 		/**
 		Only consider the server reachable if it returns a successful HTTP status code (200-299).
@@ -53,7 +53,7 @@ The browser version is limited by the fact that browsers cannot connect to arbit
 
 **Note:** By default, any HTTP response (including 4xx and 5xx) is considered "reachable" since it proves the server is responding. Use `requireHttpSuccess: true` if you need to check for successful responses only.
 
-@param targets - One or more targets to check. Can either be `hostname:port`, a URL like `https://hostname:port` or even just `hostname`. `port` must be specified if protocol is not `http:` or `https:` and defaults to `443`. Protocols other than `http:` and `https:` are not supported.
+@param targets - One or more targets to check. Can either be `hostname:port`, an IP address like `1.2.3.4` or `1.2.3.4:port`, a URL like `https://hostname:port`, or even just `hostname`. `port` must be specified if protocol is not `http:` or `https:` and defaults to `443`. Protocols other than `http:` and `https:` are not supported. Bare IP addresses default to HTTP.
 @returns Whether any of the `targets` are reachable.
 
 @example

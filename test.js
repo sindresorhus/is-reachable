@@ -6,7 +6,6 @@ import assert from 'node:assert';
 import isReachable from './index.js';
 
 const dnsResolveP = promisify(dns.resolve);
-const dnsLookupP = promisify(dns.lookup);
 
 test('hostname', async () => {
 	assert.ok(await isReachable('google.com'));
@@ -21,16 +20,19 @@ test('google.com:443 should use HTTPS', async () => {
 	assert.ok(await isReachable('google.com:443'));
 });
 
-test('ip', async () => {
-	// Use HTTP for IP addresses to avoid SSL certificate issues
+test('bare ip', async () => {
+	const ips = await dnsResolveP('google.com');
+	assert.ok(await isReachable(ips[0]));
+});
+
+test('ip with explicit protocol', async () => {
 	const ips = await dnsResolveP('google.com');
 	assert.ok(await isReachable(`http://${ips[0]}`));
 });
 
-test('ip and protocol', async () => {
-	// Use HTTP for IP addresses to avoid SSL certificate issues
-	const dnsResult = await dnsLookupP('google.com');
-	assert.ok(await isReachable(`http://${dnsResult.address}`));
+test('ip with port', async () => {
+	const ips = await dnsResolveP('google.com');
+	assert.ok(await isReachable(`${ips[0]}:80`));
 });
 
 test('multiple https urls', async () => {

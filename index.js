@@ -16,7 +16,13 @@ const parseTarget = input => {
 
 	// Handle IPv6 addresses that need brackets for URL parsing
 	const normalizedInput = !isExplicitHttp && net.isIPv6(input) ? `[${input}]` : input;
-	const url = new URL(prependHttp(normalizedInput));
+
+	// Bare IP addresses without a protocol should default to HTTP since IPs rarely have valid SSL certificates
+	const isBareIp = !isExplicitHttp && (net.isIPv6(input) || net.isIPv4(input.split(':')[0]));
+	const withProtocol = isBareIp
+		? `http://${normalizedInput}`
+		: prependHttp(normalizedInput);
+	const url = new URL(withProtocol);
 
 	return {url, isExplicitHttp};
 };
