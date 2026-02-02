@@ -2,14 +2,8 @@ import net from 'node:net';
 import {withTimeout} from 'fetch-extras';
 import isPortReachable from 'is-port-reachable';
 import prependHttp from 'prepend-http';
-import routerIps from 'router-ips';
 
 const enhancedFetch = withTimeout(fetch, 30_000);
-
-const isRedirectStatus = code => code >= 300 && code < 400;
-
-const stripBrackets = host =>
-	host.startsWith('[') && host.endsWith(']') ? host.slice(1, -1) : host;
 
 const parseTarget = input => {
 	const isExplicitHttp = input.startsWith('http://') || input.startsWith('https://');
@@ -44,34 +38,13 @@ const buildHttpUrl = (url, isExplicitHttp) => {
 	return null; // Not an HTTP(S) target
 };
 
-const isRouterRedirect = (response, requestUrl) => {
-	if (!isRedirectStatus(response.status)) {
-		return false;
-	}
-
-	const location = response.headers.get('location');
-	if (!location) {
-		return false;
-	}
-
-	try {
-		const redirectUrl = new URL(location, requestUrl);
-		return routerIps.has(stripBrackets(redirectUrl.hostname));
-	} catch {
-		return false;
-	}
-};
-
 const checkHttp = async (url, signal, requireHttpSuccess) => {
+	// Don't follow redirects — any HTTP response (including 3xx) means the server is reachable.
 	const fetchOptions = {redirect: 'manual', signal};
 
 	// Try HEAD first for better performance
 	try {
 		const response = await enhancedFetch(url, {method: 'HEAD', ...fetchOptions});
-
-		if (isRouterRedirect(response, url)) {
-			return false;
-		}
 
 		// HEAD is supported, use this response
 		if (response.status !== 405 && response.status !== 501) {
@@ -84,11 +57,6 @@ const checkHttp = async (url, signal, requireHttpSuccess) => {
 	// Fallback to GET
 	try {
 		const response = await enhancedFetch(url, fetchOptions);
-
-		if (isRouterRedirect(response, url)) {
-			return false;
-		}
-
 		return requireHttpSuccess ? response.ok : true;
 	} catch {
 		return false;

@@ -106,3 +106,12 @@ test('HTTP redirect detection', async () => {
 	// Test that HTTP redirects work correctly (google.com redirects to HTTPS)
 	assert.ok(await isReachable('http://google.com'));
 });
+
+test('server returning redirect is considered reachable', async () => {
+	const server = http.createServer((_, response) => {
+		response.writeHead(302, {location: 'http://192.168.1.1'});
+		response.end();
+	}).listen(8082);
+	assert.ok(await isReachable('http://localhost:8082'));
+	server.close();
+});
